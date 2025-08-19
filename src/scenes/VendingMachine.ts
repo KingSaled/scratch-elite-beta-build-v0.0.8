@@ -242,42 +242,48 @@ export class VendingMachine extends Container {
       slot.setAttribute('role', 'button');
       slot.setAttribute('tabindex', '0');
 
-      // Progressive BG load to avoid “pop-in”
-      const bgURL = v.bgImage || '';
-      slot.classList.add('loading');
-
-      // Always allow clicks, even while the image is loading
+      // Always allow clicks, even while image is loading
       slot.style.pointerEvents = 'auto';
 
-      // Placeholder gradient immediately
-      slot.style.backgroundImage = 'linear-gradient(#0f1723,#0b1220)';
+      // Base styling (gradient fallback)
+      slot.style.setProperty(
+        'background-image',
+        'linear-gradient(#0f1723,#0b1220)',
+        'important'
+      );
       slot.style.backgroundSize = 'cover';
       slot.style.backgroundPosition = 'center';
       slot.style.backgroundRepeat = 'no-repeat';
 
+      // Progressive BG: set the URL immediately so the browser starts fetching,
+      // then also try an <img> preload; either way the slot stays clickable.
+      const bgURL = v.bgImage || '';
       if (bgURL) {
-        // Warm the cache
-        preloadImage(bgURL);
+        // Set the real BG right away (with gradient behind it)
+        slot.style.setProperty(
+          'background-image',
+          `url("${bgURL}"), linear-gradient(#0f1723,#0b1220)`,
+          'important'
+        );
 
-        // Load and then swap the BG
+        // Optional warm-up (doesn't block UI)
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.referrerPolicy = 'no-referrer';
         img.decoding = 'auto';
         (img as any).loading = 'eager';
         img.onload = () => {
-          slot.style.backgroundImage = `url("${bgURL}")`;
-          slot.classList.remove('loading');
-          slot.classList.add('loaded');
+          // Ensure our URL sticks even if external CSS tries to override
+          slot.style.setProperty(
+            'background-image',
+            `url("${bgURL}"), linear-gradient(#0f1723,#0b1220)`,
+            'important'
+          );
         };
         img.onerror = () => {
-          slot.classList.remove('loading');
-          slot.classList.add('loaded');
+          // Keep gradient fallback; still clickable
         };
         img.src = bgURL;
-      } else {
-        slot.classList.remove('loading');
-        slot.classList.add('loaded');
       }
 
       // Title ribbon
@@ -302,6 +308,8 @@ export class VendingMachine extends Container {
         (badgeImg as any).loading = 'eager';
         badgeImg.referrerPolicy = 'no-referrer';
         badgeImg.crossOrigin = 'anonymous';
+        // make sure the badge never blocks clicks on the tile
+        badgeImg.style.pointerEvents = 'none';
         badgeWrap.appendChild(badgeImg);
       } else {
         const pill = document.createElement('span');
@@ -320,6 +328,7 @@ export class VendingMachine extends Container {
         slot.classList.add('locked');
         const lock = document.createElement('div');
         lock.className = 'vm-lock'; // CSS ::after draws the centered red pill
+        lock.style.pointerEvents = 'none'; // let slot receive the click
         slot.append(lock);
 
         slot.onclick = () => this.openUnlock(t.id, t.name);
