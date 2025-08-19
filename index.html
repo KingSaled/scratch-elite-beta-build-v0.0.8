@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+    />
+    <title>Scratch Elite</title>
+
+    <!-- Favicon (ICO) + PNGs with cache-busting -->
+    <link rel="icon" href="./favicon.ico?v=2" sizes="any" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="./assets/index-BCaGGcwF.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/style-CSuNLqX0.css">
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <div class="ui">
+      <!-- ==== Topbar ======================================================= -->
+      <div class="topbar" id="topbar">
+        <div class="topbar-bg"></div>
+
+        <!-- Profile (username + avatar) -->
+        <div class="tb-left">
+          <img id="tbAvatar" class="tb-avatar" alt="avatar" />
+          <div class="tb-user">
+            <div id="tbUsername" class="tb-name">Player</div>
+            <div id="tbDaily" class="tb-sub">Daily 0/10</div>
+          </div>
+        </div>
+
+        <!-- Pills: Level / Money / Tokens -->
+        <div class="tb-pills">
+          <div class="pill">Level <span id="level">1</span></div>
+          <div class="pill">Money <span id="money">$0</span></div>
+          <div class="pill">Tokens <span id="tokens">0</span></div>
+        </div>
+
+        <!-- Streak HUD mount -->
+        <div class="tb-streak">
+          <div id="streakHud"></div>
+        </div>
+      </div>
+      <!-- =================================================================== -->
+
+      <div id="winbar" class="winbar">
+        Winning Numbers: <span id="win" class="win-nums"></span>
+      </div>
+
+      <button id="claim" class="btn-claim">Claim Prize</button>
+
+      <!-- Settings -->
+      <div class="panel" id="settingsPanel">
+        <!-- Header box -->
+        <div class="section-header">
+          <div class="section-title">Settings</div>
+        </div>
+
+        <!-- Preferences -->
+        <div class="section">
+          <div class="section-label">Preferences</div>
+          <div class="row">
+            <label class="switch">
+              <input id="prefAutoReturn" type="checkbox" />
+              <span class="check"></span>
+              <span class="label">Auto return to Inventory after Claim</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Audio -->
+        <div class="section">
+          <div class="section-label">Audio</div>
+
+          <div class="row audio-row">
+            <div class="audio-label">Music</div>
+            <label class="switch">
+              <input id="musicMute" type="checkbox" />
+              <span class="check"></span>
+              <span class="label">Mute</span>
+            </label>
+            <input
+              id="musicVol"
+              class="slider"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+            />
+            <div class="pct" id="musicPct">0%</div>
+          </div>
+
+          <div class="row audio-row">
+            <div class="audio-label">Effects</div>
+            <label class="switch">
+              <input id="sfxMute" type="checkbox" />
+              <span class="check"></span>
+              <span class="label">Mute</span>
+            </label>
+            <input
+              id="sfxVol"
+              class="slider"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+            />
+            <div class="pct" id="sfxPct">0%</div>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="section">
+          <div class="section-label">Profile</div>
+          <div class="row gap">
+            <button id="btnExport" class="btn">Export Profile</button>
+            <label class="btn">
+              Import Profile
+              <input
+                id="fileImport"
+                type="file"
+                accept=".json,application/json"
+                hidden
+              />
+            </label>
+            <button id="btnReset" class="btn btn-danger">Reset</button>
+          </div>
+        </div>
+
+        <!-- Performance -->
+        <div class="section">
+          <div class="section-label">Performance</div>
+          <div class="row">
+            <label class="switch">
+              <input id="perfMode" type="checkbox" />
+              <span class="check"></span>
+              <span class="label">Performance Mode</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Debug (hidden gate) -->
+        <div class="section" id="debugSection" style="display: none">
+          <div class="section-label">Debug Menu</div>
+          <div class="row gap wrap">
+            <button class="btn" data-debug="add10000">+$10,000</button>
+            <button class="btn" data-debug="add100000">+$100,000</button>
+            <button class="btn" data-debug="spend1">Spend $1</button>
+            <button class="btn" data-debug="spend10">Spend $10</button>
+            <button class="btn" data-debug="spend100">Spend $100</button>
+            <label class="switch">
+              <input id="dbgUnlockAll" type="checkbox" />
+              <span class="check"></span>
+              <span class="label">Unlock All Tiers</span>
+            </label>
+            <button class="btn" data-debug="hardRefresh">Hard Refresh</button>
+          </div>
+        </div>
+
+        <!-- tiny secret emoji activator -->
+        <button id="dbgEgg" class="dbg-egg" title="💫"></button>
+      </div>
+
+      <!-- Vending Machine Panel -->
+      <div class="vendor" id="vendorPanel">
+        <div class="vendor-head">
+          <div class="vendor-qty">
+            <label
+              ><input type="radio" name="buyQty" value="1" checked /> 1×</label
+            >
+            <label><input type="radio" name="buyQty" value="5" /> 5×</label>
+            <label><input type="radio" name="buyQty" value="10" /> 10×</label>
+
+            <!-- Free-form quantity -->
+            <label class="qty-wrap">
+              <span>Qty</span>
+              <input
+                id="buyQtyInput"
+                type="number"
+                min="1"
+                max="999"
+                step="1"
+                value="1"
+                class="qty-input"
+              />
+            </label>
+          </div>
+
+          <div class="vendor-buy">
+            <div id="vendorMeta" class="cost">Vendor Lvl 1 • XP 0/100</div>
+            <button id="btnBuy" disabled>Buy</button>
+          </div>
+        </div>
+
+        <div id="vendorGrid"></div>
+      </div>
+
+      <!-- Stats Panel -->
+      <div id="statsPanel" class="panel stats-panel"></div>
+
+      <!-- Profile Panel -->
+      <div id="profilePanel" class="panel profile-panel"></div>
+
+      <!-- Inventory Panel -->
+      <div class="inventory" id="inventoryPanel">
+        <div class="inv-head">
+          <select id="invFilterPrice">
+            <option value="all">All Prices</option>
+            <option value="1-5">$1–5</option>
+            <option value="6-25">$6–25</option>
+            <option value="26-100">$26–100</option>
+            <option value="101-1000">$101–1,000</option>
+            <option value="1001-10000">$1,001–10,000</option>
+            <option value="10001-100000">$10,001–100,000</option>
+            <option value="100001-1000000">$100,001–1,000,000</option>
+            <option value="1000001+">$1,000,001+</option>
+          </select>
+          <select id="invFilterState">
+            <option value="sealed" selected>Sealed</option>
+            <option value="scratched">Scratched</option>
+            <option value="claimed">Claimed</option>
+            <option value="all">All</option>
+          </select>
+          <select id="invFilterSet">
+            <option value="all">All Sets</option>
+            <option value="Neighborhood">Neighborhood</option>
+            <option value="City">City</option>
+            <option value="Treasure">Treasure</option>
+            <option value="Mythic">Mythic</option>
+            <option value="Legend">Legend</option>
+          </select>
+          <select id="invSort">
+            <option value="new">Newest</option>
+            <option value="old">Oldest</option>
+            <option value="priceAsc">Price ↑</option>
+            <option value="priceDesc">Price ↓</option>
+          </select>
+        </div>
+        <div id="invGrid" class="inv-grid"></div>
+      </div>
+
+      <!-- Upgrades Panel -->
+      <div class="upgrades" id="upgradesPanel">
+        <div id="upgList" class="upg-list"></div>
+      </div>
+
+      <!-- NAVBAR -->
+      <div class="navbar">
+        <button
+          class="nav-btn"
+          data-scene="VendingMachine"
+          data-tex=""
+          aria-label="Vendor"
+        >
+          <span class="nav-pill">Vendor</span>
+        </button>
+        <button
+          class="nav-btn"
+          data-scene="Inventory"
+          data-tex=""
+          aria-label="Inventory"
+        >
+          <span class="nav-pill">Inventory</span>
+        </button>
+        <button
+          class="nav-btn"
+          data-scene="Upgrades"
+          data-tex=""
+          aria-label="Upgrades"
+        >
+          <span class="nav-pill">Upgrades</span>
+        </button>
+        <button
+          class="nav-btn"
+          data-scene="Stats"
+          data-tex=""
+          aria-label="Stats"
+        >
+          <span class="nav-pill">Stats</span>
+        </button>
+        <button
+          class="nav-btn"
+          data-scene="Profile"
+          data-tex=""
+          aria-label="Profile"
+        >
+          <span class="nav-pill">Profile</span>
+        </button>
+        <button
+          class="nav-btn"
+          data-scene="Settings"
+          data-tex=""
+          aria-label="Settings"
+        >
+          <span class="nav-pill">Settings</span>
+        </button>
+      </div>
+
+      <!-- Toasts + Modal -->
+      <div id="toasts" class="toasts"></div>
+      <div id="modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card">
+          <div class="modal-title" id="modalTitle"></div>
+          <div class="modal-body" id="modalBody"></div>
+          <div class="modal-actions" id="modalActions"></div>
+        </div>
+      </div>
+
+      <!-- Global Unlock overlay -->
+      <div id="unlockPanel">
+        <div class="unlock-card">
+          <button id="btnUnlockClose">X</button>
+          <div id="unlockTitle"></div>
+          <div id="unlockReqs"></div>
+          <button id="btnUnlock">Unlock</button>
+        </div>
+      </div>
+
+      <!-- Scripts -->
+
+      <!-- FX overlay root -->
+      <div id="fxOverlay">
+        <div class="pattern"></div>
+        <div class="shine"></div>
+      </div>
+    </div>
+  </body>
+</html>
