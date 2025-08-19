@@ -37,28 +37,41 @@ function setUIForScene(scene: SceneKey) {
 /* ---------------- PIXI APP ---------------- */
 const appDiv = document.getElementById('app') as HTMLDivElement;
 
-const app = new Application();
-await app.init({
+// Common options
+const opts = {
   backgroundAlpha: 0,
   resizeTo: appDiv,
-  preference: 'webgl',
   antialias: true,
-  // DPR cap to keep VRAM/CPU reasonable on high-DPI displays
   resolution: Math.min(window.devicePixelRatio || 1, 1.5),
-  // Perf hints for the browser/GPU selection
   powerPreference: 'high-performance',
   failIfMajorPerformanceCaveat: false,
+  // v8-only hint; harmless on v7
+  preference: 'webgl',
+};
+
+// Create the app in a way that works for both v8 and v7
+let app: any;
+
+if (typeof (Application as any).prototype?.init === 'function') {
+  // PIXI v8 style
+  app = new Application();
+  await app.init(opts);
+} else {
+  // PIXI v7 style
+  app = new (Application as any)(opts);
+}
+
+// Canvas property name differs between v8 (canvas) and v7 (view)
+const canvas = (app.canvas ?? app.view) as HTMLCanvasElement;
+appDiv.appendChild(canvas);
+
+// If you listen for context restore, handle both cases
+(canvas as HTMLCanvasElement).addEventListener('webglcontextrestored', () => {
+  console.warn('[Pixi] context restored – relayout current scene');
+  onResize();
 });
-appDiv.appendChild(app.canvas);
 
-(app.canvas as HTMLCanvasElement).addEventListener(
-  'webglcontextrestored',
-  () => {
-    console.warn('[Pixi] context restored – relayout current scene');
-    onResize();
-  }
-);
-
+// Continue as before
 const scenes = new SceneManager(app);
 
 /* ---------------- HUD ---------------- */
