@@ -42741,6 +42741,7 @@ const PRINT_MP3 = "" + new URL("print-EnXaV7Qm.mp3", import.meta.url).href;
 const PRINT_OGG = "" + new URL("print-DRYkf-Gn.ogg", import.meta.url).href;
 const K_VOL = "sfxVol";
 const K_MUTE = "sfxMute";
+const SFX_BASE = `${"./"}sfx/`;
 function load(k2, d2) {
   try {
     const v2 = localStorage.getItem(k2);
@@ -42753,19 +42754,18 @@ function preferOgg() {
   const a2 = document.createElement("audio");
   return !!a2.canPlayType && a2.canPlayType('audio/ogg; codecs="vorbis"') !== "";
 }
-function buildUrl(relBaseNoExt) {
-  const clean = relBaseNoExt.replace(/^\/+/, "");
-  const baseNoExt = /^(?:\.{1,2}\/)/.test(clean) ? clean : `./${clean}`;
-  const ext = preferOgg() ? ".ogg" : ".mp3";
-  return new URL(baseNoExt + ext, import.meta.url).href;
+function buildUrl(nameNoExt) {
+  const clean = nameNoExt.replace(/^\/+/, "");
+  const ext = preferOgg() ? "ogg" : "mp3";
+  return `${SFX_BASE}${clean}.${ext}`;
 }
 class SfxBus {
   vol = load(K_VOL, 0.05);
   mute = load(K_MUTE, false);
   events = new EventTarget();
   voices = {};
-  register(key, relBaseNoExt, poolSize = 3) {
-    const url = buildUrl(relBaseNoExt);
+  register(key, nameNoExt, poolSize = 3) {
+    const url = buildUrl(nameNoExt);
     const pool = [];
     for (let i2 = 0; i2 < poolSize; i2++) {
       const a2 = new Audio(url);
@@ -42787,10 +42787,10 @@ class SfxBus {
     } catch {
     }
   }
-  // Optional direct play by path base (without extension)
-  playFile(relBaseNoExt) {
+  // Optional: play by file name (without extension)
+  playFile(nameNoExt) {
     try {
-      const url = buildUrl(relBaseNoExt);
+      const url = buildUrl(nameNoExt);
       const a2 = new Audio(url);
       a2.volume = this.mute ? 0 : this.vol;
       void a2.play().catch(() => {
@@ -42805,7 +42805,6 @@ class SfxBus {
   getVolumePercent() {
     return Math.round(this.vol * 100);
   }
-  // both styles supported for callers
   isMuted() {
     return !!this.mute;
   }
@@ -42834,19 +42833,19 @@ class SfxBus {
   }
 }
 const sfx = new SfxBus();
-sfx.register("nav", "../sfx/ui-nav", 3);
-sfx.register("btn", "../sfx/btn", 3);
-sfx.register("cancel", "../sfx/cancel", 2);
-sfx.register("toggle", "../sfx/toggle", 2);
-sfx.register("slide", "../sfx/slide", 2);
-sfx.register("modal-open", "../sfx/modal-open", 1);
-sfx.register("modal-close", "../sfx/modal-close", 1);
-sfx.register("rip", "../sfx/rip", 3);
-sfx.register("win", "../sfx/win", 2);
-sfx.register("token", "../sfx/token", 2);
-sfx.register("levelup", "../sfx/levelup", 1);
-sfx.register("unlock", "../sfx/unlock", 1);
-sfx.register("badge", "../sfx/badge", 1);
+sfx.register("nav", "ui-nav", 3);
+sfx.register("btn", "btn", 3);
+sfx.register("cancel", "cancel", 2);
+sfx.register("toggle", "toggle", 2);
+sfx.register("slide", "slide", 2);
+sfx.register("modal-open", "modal-open", 1);
+sfx.register("modal-close", "modal-close", 1);
+sfx.register("rip", "rip", 3);
+sfx.register("win", "win", 2);
+sfx.register("token", "token", 2);
+sfx.register("levelup", "levelup", 1);
+sfx.register("unlock", "unlock", 1);
+sfx.register("badge", "badge", 1);
 function fmtMoney$1(n2) {
   return `$${Math.max(0, Math.floor(n2)).toLocaleString()}`;
 }
