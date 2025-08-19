@@ -22,9 +22,7 @@ const scenePanels: Partial<Record<SceneKey, string[]>> = {
 };
 
 function setUIForScene(scene: SceneKey) {
-  const want = new Set(
-    (scenePanels[scene] ?? []).map((id) => id.toLowerCase())
-  );
+  const want = new Set((scenePanels[scene] ?? []).map((id) => id.toLowerCase()));
   const ALL =
     '#vendorPanel, #inventoryPanel, #upgradesPanel, #statsPanel, #profilePanel, #settingsPanel, #winbar';
   document.querySelectorAll<HTMLElement>(ALL).forEach((el) => {
@@ -38,7 +36,7 @@ function setUIForScene(scene: SceneKey) {
 const appDiv = document.getElementById('app') as HTMLDivElement;
 
 // Common options
-const opts = {
+const opts: any = {
   backgroundAlpha: 0,
   resizeTo: appDiv,
   antialias: true,
@@ -46,6 +44,7 @@ const opts = {
   powerPreference: 'high-performance',
   failIfMajorPerformanceCaveat: false,
   // v8-only hint; harmless on v7
+  // @ts-expect-error PIXI v7 does not have this option typed
   preference: 'webgl',
 };
 
@@ -61,17 +60,21 @@ if (typeof (Application as any).prototype?.init === 'function') {
   app = new (Application as any)(opts);
 }
 
-// Canvas property name differs between v8 (canvas) and v7 (view)
-const canvas = (app.canvas ?? app.view) as HTMLCanvasElement;
-appDiv.appendChild(canvas);
+// Helper to get the canvas across v8 (canvas) and v7 (view)
+const getCanvas = (): HTMLCanvasElement | null =>
+  (app?.canvas as HTMLCanvasElement) ?? (app?.view as HTMLCanvasElement) ?? null;
 
-// If you listen for context restore, handle both cases
-(canvas as HTMLCanvasElement).addEventListener('webglcontextrestored', () => {
+// Append canvas after init so it definitely exists
+const canvas = getCanvas();
+if (canvas) appDiv.appendChild(canvas);
+
+// Listen for GPU context restore safely
+canvas?.addEventListener('webglcontextrestored', () => {
   console.warn('[Pixi] context restored – relayout current scene');
   onResize();
 });
 
-// Continue as before
+// Scene manager
 const scenes = new SceneManager(app);
 
 /* ---------------- HUD ---------------- */
@@ -91,9 +94,7 @@ if (!state.flags) state.flags = {};
 if (typeof state.flags.autoReturn === 'undefined') {
   state.flags.autoReturn = true;
   saveNow();
-  const prefAuto = document.getElementById(
-    'prefAutoReturn'
-  ) as HTMLInputElement | null;
+  const prefAuto = document.getElementById('prefAutoReturn') as HTMLInputElement | null;
   if (prefAuto) prefAuto.checked = true;
 }
 
@@ -116,9 +117,7 @@ window.addEventListener('keydown', kick, { once: true });
 
 /* Reduce the “FOUC” warning */
 if (document.readyState !== 'complete') {
-  await new Promise<void>((r) =>
-    window.addEventListener('load', () => r(), { once: true })
-  );
+  await new Promise<void>((r) => window.addEventListener('load', () => r(), { once: true }));
 }
 if ((document as any).fonts?.ready) {
   try {
@@ -127,43 +126,59 @@ if ((document as any).fonts?.ready) {
 }
 
 /* ---------------- NAV ---------------- */
-document
-  .querySelectorAll<HTMLButtonElement>('.nav-btn[data-scene]')
-  .forEach((btn) => {
-    btn.addEventListener(
-      'pointerdown',
-      () => {
-        const target = btn.dataset.scene as SceneKey;
-        scenes.goto(target);
-        setUIForScene(target);
+document.querySelectorAll<HTMLButtonElement>('.nav-btn[data-scene]').forEach((btn) => {
+  btn.addEventListener(
+    'pointerdown',
+    () => {
+      const target = btn.dataset.scene as SceneKey;
+      scenes.goto(target);
+      setUIForScene(target);
 
-        const settingsPanel = document.getElementById('settingsPanel')!;
-        if (target === 'Settings') settingsPanel.classList.toggle('show');
-        else settingsPanel.classList.remove('show');
+      const settingsPanel = document.getElementById('settingsPanel')!;
+      if (target === 'Settings') settingsPanel.classList.toggle('show');
+      else settingsPanel.classList.remove('show');
 
-        queueMicrotask(onResize);
-      },
-      { passive: true }
-    ); // keep it passive = faster scrolling/gestures
-  });
+      queueMicrotask(onResize);
+    },
+    { passive: true }
+  ); // keep it passive = faster scrolling/gestures
+});
 
 /* ---------------- CLAIM BUTTON ---------------- */
 (document.getElementById('claim') as HTMLButtonElement).style.display = 'none';
 
 /* ---------------- LAYOUT ---------------- */
+// Size the canvas CSS to the container and resize the renderer
 function cssCanvasSize() {
-  const r = app.canvas.getBoundingClientRect();
-  return { w: Math.round(r.width), h: Math.round(r.height) };
+  const c = getCanvas();
+  if (!c || !c.isConnected) return { w: 0, h: 0 };
+  const rect = appDiv.getBoundingClientRect(); // measure container, not canvas
+  c.style.width = rect.width + 'px';
+  c.style.height = rect.height + 'px';
+  return { w: Math.max(1, Math.round(rect.width)), h: Math.max(1, Math.round(rect.height)) };
 }
+
 function onResize() {
+  const c = getCanvas();
+  if (!c) return; // not ready yet
   const { w, h } = cssCanvasSize();
+  if (w === 0 || h === 0) return;
+
+  // Both v7 and v8 support resize(w, h)
+  app.renderer.resize(w, h);
+
+  // Let scenes lay out their content
   scenes.layout(w, h);
 }
+
 (window as any).__APP__ = app;
 (window as any).__SCENES__ = scenes;
 
-new ResizeObserver(onResize).observe(appDiv);
-new ResizeObserver(onResize).observe(app.canvas);
+// Observe the container (stable) rather than the canvas (which might be null early)
+const ro = new ResizeObserver(() => onResize());
+ro.observe(appDiv);
+
+// Also handle window + visual viewport changes
 if ((window as any).visualViewport) {
   (window as any).visualViewport.addEventListener('resize', onResize);
   (window as any).visualViewport.addEventListener('scroll', onResize);
@@ -181,6 +196,7 @@ if (import.meta.hot) {
     try {
       (scenes as any)?.clearAll?.();
     } catch {}
+    // Destroy app; v7/v8 both accept this form
     app.destroy(true, { children: true, texture: false, baseTexture: false });
   });
 }
