@@ -7,11 +7,5 @@ export const browserAll = (() => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isFirefox = /firefox/i.test(navigator.userAgent);
 
-  return {
-    isIOS,
-    isAndroid,
-    isMobile,
-    isSafari,
-    isFirefox,
-  };
+  return { isIOS, isAndroid, isMobile, isSafari, isFirefox };
 })();
