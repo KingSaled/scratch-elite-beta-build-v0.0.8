@@ -13,13 +13,13 @@ import { getDiscountedTotal, getEffects } from '../core/upgrades.js';
 import { toast } from '../ui/alerts.js';
 import { nextSerialForTier } from '../core/serials.js';
 import { addLifetimeSpent } from '../core/state.js';
-import { sfx } from '../core/sfx.ts';
+import { sfx } from '../core/sfx.js';
 
 function fmtMoney(n: number) {
   return `$${Math.max(0, Math.floor(n)).toLocaleString()}`;
 }
 
-// --- lightweight image pre-cache for vendor & elsewhere ---
+/* ---------------- Image pre-cache (lightweight) ---------------- */
 const _imgCache = new Map<string, Promise<string>>();
 
 function preloadImage(url: string): Promise<string> {
@@ -30,12 +30,10 @@ function preloadImage(url: string): Promise<string> {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.referrerPolicy = 'no-referrer';
-    // decoding hint; some CDNs skip firing onload reliably with 'async' on older browsers
     img.decoding = 'auto';
-    // eager keeps the queue small on first paint
     (img as any).loading = 'eager';
     img.onload = () => resolve(url);
-    img.onerror = () => resolve(url); // resolve anyway; we’ll still set a BG
+    img.onerror = () => resolve(url); // resolve anyway; keep UI interactive
     img.src = url;
   });
 
@@ -48,7 +46,6 @@ async function precacheAllTierArt() {
   if (_precacheDone) return;
   _precacheDone = true;
 
-  // re-import to avoid any potential circular timing (safe even if redundant)
   const { getTiers } = await import('../data/content.js');
   const tiers = getTiers();
 
@@ -64,16 +61,14 @@ async function precacheAllTierArt() {
   await Promise.all([...urls].map(preloadImage));
 }
 
+/* ---------------- Local print SFX (public/sfx) ---------------- */
 const PRINT_BASE = `${import.meta.env.BASE_URL}sfx/print`;
 
 function pickPrintSrc(audio: HTMLAudioElement) {
-  // Prefer OGG if supported, otherwise MP3, otherwise default to OGG
   const ogg = audio.canPlayType('audio/ogg; codecs="vorbis"');
   if (ogg === 'probably' || ogg === 'maybe') return `${PRINT_BASE}.ogg`;
-
   const mp3 = audio.canPlayType('audio/mpeg');
   if (mp3 === 'probably' || mp3 === 'maybe') return `${PRINT_BASE}.mp3`;
-
   return `${PRINT_BASE}.ogg`;
 }
 
@@ -85,12 +80,10 @@ export class VendingMachine extends Container {
     'vendorMeta'
   ) as HTMLDivElement | null;
 
-  // Optional quantity input (free-form). Radios still work; precedence handled by qtySource.
   private qtyInput = document.getElementById(
     'buyQtyInput'
   ) as HTMLInputElement | null;
 
-  // GLOBAL overlay (not inside vendor)
   private unlockPanel = document.getElementById(
     'unlockPanel'
   ) as HTMLDivElement | null;
@@ -110,20 +103,17 @@ export class VendingMachine extends Container {
   private selectedTierId: string | null = null;
   private buying = false;
 
-  // quantity precedence tracking
   private qtySource: 'radio' | 'custom' = 'radio';
 
-  // lightweight sfx (add /sfx/print.mp3 or print.ogg to your public folder)
   private printAudio: HTMLAudioElement | null = null;
 
   constructor() {
     super();
 
-    // sound init (don’t break if file missing)
+    /* ----- SFX init (non-fatal if missing) ----- */
     try {
       this.printAudio = new Audio();
       this.printAudio.preload = 'auto';
-
       this.printAudio.src = pickPrintSrc(this.printAudio);
 
       const sync = () => {
@@ -140,12 +130,11 @@ export class VendingMachine extends Container {
       this.printAudio = null as any;
     }
 
-    // basic events
+    /* ----- Basic events ----- */
     this.buyBtn.onclick = () => this.buySelected();
     if (this.unlockClose) this.unlockClose.onclick = () => this.hideUnlock();
     if (this.unlockBtn) this.unlockBtn.onclick = () => this.confirmUnlock();
 
-    // radios: if a radio is chosen, it wins; reset custom to 0
     Array.from(
       document.querySelectorAll<HTMLInputElement>('input[name="buyQty"]')
     ).forEach((r) =>
@@ -156,9 +145,8 @@ export class VendingMachine extends Container {
       })
     );
 
-    // free-form qty: only “wins” when focused/typed
     if (this.qtyInput) {
-      this.qtyInput.min = '0'; // 0 means inactive until you type
+      this.qtyInput.min = '0';
       this.qtyInput.max = '9999';
       this.qtyInput.step = '1';
       if (!this.qtyInput.value) this.qtyInput.value = '0';
@@ -179,7 +167,7 @@ export class VendingMachine extends Container {
 
   onEnter() {
     this.panel.classList.add('show', 'vending-skin');
-    precacheAllTierArt(); // warm the cache ASAP
+    precacheAllTierArt();
     this.render();
     this.updateVendorMeta();
   }
@@ -191,7 +179,6 @@ export class VendingMachine extends Container {
 
   private sanitizeQty() {
     if (!this.qtyInput) return;
-    // keep 0 as “inactive” when custom isn’t intended; otherwise clamp 1..9999
     const raw = Math.floor(Number(this.qtyInput.value) || 0);
     const n = raw === 0 ? 0 : Math.max(1, Math.min(9999, raw));
     this.qtyInput.value = String(n);
@@ -200,10 +187,8 @@ export class VendingMachine extends Container {
   private getQty(): number {
     if (this.qtySource === 'custom' && this.qtyInput) {
       const n = Math.floor(Number(this.qtyInput.value) || 0);
-      // 0 means inactive → handled by updateBuyButton()
       if (n >= 0 && n <= 9999) return n;
     }
-    // Fallback to radios (1/5/10)
     const r = document.querySelector<HTMLInputElement>(
       'input[name="buyQty"]:checked'
     );
@@ -223,9 +208,10 @@ export class VendingMachine extends Container {
       : `Vendor Lvl ${state.vendorLevel} • MAX`;
   }
 
+  /* ---------------- RENDER ---------------- */
   private render() {
-    let firstSelected = false;
     const prevSelected = this.selectedTierId || null;
+    let firstSelected = false;
 
     this.grid.innerHTML = '';
 
@@ -235,8 +221,9 @@ export class VendingMachine extends Container {
 
     for (const t of tiers) {
       const v: any = t.visual || {};
+      const bgURL = v.bgImage || '';
 
-      // --- Slot wrapper (button-like for a11y)
+      // Wrapper
       const slot = document.createElement('div');
       slot.className = 'vm-slot';
       slot.setAttribute('role', 'button');
@@ -245,50 +232,31 @@ export class VendingMachine extends Container {
       // Keep tiles clickable regardless of image state
       slot.style.pointerEvents = 'auto';
 
-      // Placeholder gradient immediately (shorthand with !important)
-      slot.style.setProperty(
-        'background',
-        'linear-gradient(#0f1723,#0b1220) center/cover no-repeat',
-        'important'
-      );
-
-      const bgURL = v.bgImage || '';
+      // CSS contract: use per-tile CSS var --bg (your stylesheet reads it)
+      // Provide a gradient placeholder immediately; swap to real image when ready.
+      slot.style.setProperty('--bg', 'linear-gradient(#0f1723,#0b1220)');
 
       if (bgURL) {
-        // Set real BG immediately so the browser fetches it (keep gradient behind it)
-        slot.style.setProperty(
-          'background',
-          `url("${bgURL}") center/cover no-repeat, linear-gradient(#0f1723,#0b1220) center/cover no-repeat`,
-          'important'
-        );
-
-        // Optional warm-up (lets us re-assert the bg if CSS tries to override)
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.referrerPolicy = 'no-referrer';
-        img.decoding = 'auto';
-        (img as any).loading = 'eager';
-        img.onload = () => {
-          slot.style.setProperty(
-            'background',
-            `url("${bgURL}") center/cover no-repeat, linear-gradient(#0f1723,#0b1220) center/cover no-repeat`,
-            'important'
-          );
-        };
-        img.src = bgURL;
+        preloadImage(bgURL).then(() => {
+          // Only set once loaded so we avoid “pop-in” repaint thrash
+          slot.style.setProperty('--bg', `url("${bgURL}")`);
+          slot.classList.add('loaded');
+        });
+      } else {
+        slot.classList.add('loaded');
       }
 
-      // Title ribbon
+      // Title
       const name = document.createElement('div');
       name.className = 'vm-name';
       name.textContent = t.name || 'Ticket';
 
-      // Price tag
+      // Price
       const price = document.createElement('div');
       price.className = 'vm-price';
       price.textContent = fmtMoney(t.price);
 
-      // Tier badge
+      // Badge
       const badgeWrap = document.createElement('div');
       badgeWrap.className = 'vm-badge';
       const badgeURL = v.tierBadge as string | undefined;
@@ -319,7 +287,7 @@ export class VendingMachine extends Container {
         slot.classList.add('locked');
         const lock = document.createElement('div');
         lock.className = 'vm-lock';
-        lock.style.pointerEvents = 'none'; // let slot receive the click
+        lock.style.pointerEvents = 'none'; // let the slot receive the click
         slot.append(lock);
 
         slot.onclick = () => this.openUnlock(t.id, t.name);
@@ -333,11 +301,11 @@ export class VendingMachine extends Container {
         };
       }
 
-      // Build DOM tree
+      // Build
       slot.append(name, price, badgeWrap);
       this.grid.appendChild(slot);
 
-      // Auto-select: prefer previous selection if still unlocked; else first unlocked
+      // Auto-select previously selected (if unlocked) else first unlocked
       if (!locked) {
         if (prevSelected ? t.id === prevSelected : !firstSelected) {
           this.selectTier(slot, t.id);
@@ -406,10 +374,8 @@ export class VendingMachine extends Container {
         return;
       }
 
-      // record lifetime spend (for net profit)
       addLifetimeSpent(cost);
 
-      // sfx
       try {
         if (this.printAudio) {
           this.printAudio.currentTime = 0;
@@ -458,7 +424,7 @@ export class VendingMachine extends Container {
     }
   }
 
-  // --- Unlock (global overlay) ---
+  /* ---------------- Unlock overlay ---------------- */
   private openUnlock(tierId: string, name: string) {
     if (
       !this.unlockPanel ||
@@ -511,6 +477,7 @@ export class VendingMachine extends Container {
     }
     if (this.unlockBtn) this.unlockBtn.onclick = () => this.confirmUnlock();
   }
+
   private hideUnlock() {
     if (!this.unlockPanel) return;
     try {
@@ -520,6 +487,7 @@ export class VendingMachine extends Container {
     this.panel.classList.remove('lifted');
     this.unlockPanel.onclick = null as any;
   }
+
   private confirmUnlock() {
     if (!this.unlockBtn) return;
     const tierId = (this.unlockBtn as any).dataset.tier as string | undefined;
