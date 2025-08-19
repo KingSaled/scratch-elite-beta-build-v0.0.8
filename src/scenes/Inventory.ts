@@ -19,7 +19,7 @@ function openModal(title: string, bodyHTML: string, closeLabel = 'Close') {
   // actions (full-width primary button)
   a.innerHTML = '';
   const btn = document.createElement('button');
-  btn.className = 'btn btn-danger btn-wide'; // ⟵ was btn-primary
+  btn.className = 'btn btn-danger btn-wide'; // keep your styling
   btn.textContent = closeLabel;
   btn.onclick = () => closeModal();
   a.appendChild(btn);
@@ -38,9 +38,10 @@ function preload(url: string): Promise<void> {
   if (_imgCache.has(url)) return _imgCache.get(url)!;
   const p = new Promise<void>((resolve) => {
     const img = new Image();
-    img.decoding = 'async';
-    img.loading = 'eager';
+    img.decoding = 'auto';
+    (img as any).loading = 'eager';
     img.crossOrigin = 'anonymous';
+    img.referrerPolicy = 'no-referrer';
     img.onload = () => resolve();
     img.onerror = () => resolve();
     img.src = url;
@@ -65,6 +66,9 @@ export class InventoryScene extends Container {
     'invFilterState'
   ) as HTMLSelectElement; // sealed/scratched/claimed/all
 
+  // Delegation guard
+  private _delegated = false;
+
   constructor() {
     super();
     this.bind();
@@ -78,6 +82,7 @@ export class InventoryScene extends Container {
     );
     // Ensure the Set dropdown reflects whatever is in TicketTiers.json right now
     this.refreshSetOptions().then(() => this.render());
+    this.wireGridDelegationOnce(); // make sure delegation is in place
   }
 
   onExit() {
@@ -138,17 +143,99 @@ export class InventoryScene extends Container {
     this.fSet.value = hasPrev ? prev : 'all';
   }
 
+  // --- Robust delegated handlers so cards remain clickable after re-renders ---
+  private wireGridDelegationOnce() {
+    if (this._delegated) return;
+    this._delegated = true;
+
+    // Click → open ticket (or claimed summary)
+    this.grid.addEventListener('click', async (ev) => {
+      const target = ev.target as HTMLElement | null;
+      const card = target?.closest?.('.inv-card') as HTMLElement | null;
+      if (!card) return;
+
+      const id = card.dataset.id!;
+      const state = card.dataset.state || 'sealed';
+
+      if (state === 'claimed') {
+        // Build a summary modal from live data
+        const contentMod = await import('../data/content.js');
+        const stateMod = await import('../core/state.js');
+        const it = (stateMod.state as any).inventory.find(
+          (x: any) => x.id === id
+        );
+        if (!it) return;
+
+        const tier = contentMod.getTierById(it.tierId);
+        const price = Number(tier?.price ?? 0);
+        const summary = it.ticket || {};
+        const payout = Number((summary?.payout ?? 0) || 0);
+        const net = payout - price;
+        const winning = Array.isArray(summary?.winning) ? summary.winning : [];
+
+        const body = `
+          <div class="claimed-modal">
+            <div class="kv-grid">
+              <div class="kv-item"><div class="k">Ticket</div><div class="v">${
+                tier?.name ?? it.tierId
+              }</div></div>
+              <div class="kv-item"><div class="k">Net</div><div class="v ${
+                net >= 0 ? 'pos' : 'neg'
+              }">${net >= 0 ? '+' : ''}$${Math.abs(
+          net
+        ).toLocaleString()}</div></div>
+              <div class="kv-item"><div class="k">Price</div><div class="v mono">$${price.toLocaleString()}</div></div>
+              <div class="kv-item"><div class="k">Payout</div><div class="v mono">$${payout.toLocaleString()}</div></div>
+              <div class="kv-item span-2">
+                <div class="k">Winning #s</div>
+                <div class="v">
+                  ${
+                    winning.length
+                      ? `<div class="win-chips">${winning
+                          .map((n: number) => `<span class="chip">${n}</span>`)
+                          .join('')}</div>`
+                      : `<div class="muted">Winning numbers unavailable</div>`
+                  }
+                </div>
+              </div>
+            </div>
+          </div>`;
+        openModal('Claimed Ticket', body, 'Close');
+        return;
+      }
+
+      // Sealed or scratched → go scratch
+      try {
+        sfx.playKey('rip');
+      } catch {}
+      const sessionMod = await import('../core/session.js');
+      sessionMod.setCurrentItem(id);
+
+      // Route via navbar button (no SceneManager import required)
+      document
+        .querySelector<HTMLButtonElement>('.nav-btn[data-scene="Scratch"]')
+        ?.click();
+    });
+
+    // Keyboard a11y: Enter/Space opens the focused card
+    this.grid.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const el = e.target as HTMLElement | null;
+      const card = el?.closest?.('.inv-card') as HTMLElement | null;
+      if (!card) return;
+      e.preventDefault();
+      card.click();
+    });
+  }
+
+  // -------- Render inventory grid (no per-card handlers; delegation handles clicks) --------
   private render = async () => {
     // Lazy-load to avoid circular import headaches in bundler mode
     const stateMod = await import('../core/state.js');
     const contentMod = await import('../data/content.js');
-    const sessionMod = await import('../core/session.js');
 
     const state = stateMod.state as any;
     const getTierById = contentMod.getTierById as (id: string) => any;
-    const setCurrentItem = sessionMod.setCurrentItem as (
-      id: string | null
-    ) => void;
 
     const items = [...(state.inventory as any[])];
 
@@ -195,30 +282,49 @@ export class InventoryScene extends Container {
       if (setFilter !== 'all' && tier.set !== setFilter) continue;
       if (stateFilter !== 'all' && it.state !== stateFilter) continue;
 
-      const bgURL = tier?.visual?.bgImage || '';
+      const coverURL: string = tier?.visual?.coverImage || '';
+      const bgURL: string = coverURL || tier?.visual?.bgImage || '';
 
       // --- card root
       const card = document.createElement('div');
-      card.className = 'inv-card is-' + it.state;
+      card.className = `inv-card is-${it.state}`;
+      card.setAttribute('role', 'button');
+      card.tabIndex = 0;
+      (card.style as any).pointerEvents = 'auto';
 
-      // --- tiny ticket thumb (BG image only)
+      // identity for delegated handler
+      card.dataset.id = it.id;
+      card.dataset.state = it.state;
+      card.dataset.tier = it.tierId;
+
+      // --- tiny ticket thumb (background shorthand with !important)
       const thumb = document.createElement('div');
       thumb.className = 'inv-thumb';
       thumb.style.setProperty(
-        '--bg',
-        bgURL ? `url("${bgURL}")` : 'linear-gradient(#0f1723,#0b1220)'
+        'background',
+        'linear-gradient(#0f1723,#0b1220) center/cover no-repeat',
+        'important'
       );
 
-      // progressive loading
       if (bgURL) {
-        card.classList.add('loading');
+        // Set actual BG immediately to kick off fetch, keep gradient as fallback
+        thumb.style.setProperty(
+          'background',
+          `url("${bgURL}") center/cover no-repeat, linear-gradient(#0f1723,#0b1220) center/cover no-repeat`,
+          'important'
+        );
+
+        // Optional warm-up and re-assert (helps if external CSS tried to override)
         preload(bgURL).then(() => {
-          thumb.classList.add('loaded');
-          card.classList.remove('loading');
+          thumb.style.setProperty(
+            'background',
+            `url("${bgURL}") center/cover no-repeat, linear-gradient(#0f1723,#0b1220) center/cover no-repeat`,
+            'important'
+          );
         });
       }
 
-      // title ribbon over thumb (darker/blur handled by CSS)
+      // title ribbon over thumb
       const title = document.createElement('div');
       title.className = 'inv-title';
       title.textContent = tier.name || 'Ticket';
@@ -251,15 +357,11 @@ export class InventoryScene extends Container {
       // append in the desired layout order
       pills.append(pillSerial, pillState, pillPrice);
 
-      // --- Winner sash for claimed winners ------------------------------
+      // --- Winner sash / badge for claimed tickets
       const claimSummary = it.ticket || {};
       const payout = Number.isFinite(claimSummary.payout)
         ? claimSummary.payout
         : 0;
-
-      // Winner definition:
-      //   default → any payout > 0
-      //   If you prefer "net-positive only", change to: const isWinner = it.state === 'claimed' && payout > price;
       const isWinner = it.state === 'claimed' && payout > 0;
 
       if (isWinner) {
@@ -268,106 +370,26 @@ export class InventoryScene extends Container {
         sash.textContent = 'Winner!';
         card.appendChild(sash);
       } else if (it.state === 'claimed') {
-        // fallback badge for non-winning claimed tickets
         const badge = document.createElement('div');
         badge.className = 'inv-badge claimed';
         badge.textContent = 'CLAIMED';
         card.appendChild(badge);
       }
 
-      // build
+      // assemble
       card.append(thumb, pills);
-
-      // === Route to Scratch (no navbar dependency, tolerate different APIs) ===
-      card.addEventListener('click', async () => {
-        if (it.state === 'claimed') {
-          // Nicer modal showing claim details (existing code kept intact)
-          const summary = it.ticket || {};
-          const price = Number(tier?.price ?? 0);
-          const payout = Number((summary?.payout ?? 0) || 0);
-          const net = payout - price;
-          const winning = Array.isArray(summary?.winning)
-            ? summary.winning
-            : [];
-
-          const body = `
-      <div class="claimed-modal">
-        <div class="kv-grid">
-          <div class="kv-item"><div class="k">Ticket</div><div class="v">${
-            tier?.name ?? it.tierId
-          }</div></div>
-          <div class="kv-item"><div class="k">Net</div><div class="v ${
-            net >= 0 ? 'pos' : 'neg'
-          }">${net >= 0 ? '+' : ''}$${Math.abs(
-            net
-          ).toLocaleString()}</div></div>
-
-          <div class="kv-item"><div class="k">Price</div><div class="v mono">$${price.toLocaleString()}</div></div>
-          <div class="kv-item"><div class="k">Payout</div><div class="v mono">$${payout.toLocaleString()}</div></div>
-
-          <div class="kv-item span-2">
-            <div class="k">Winning #s</div>
-            <div class="v">
-              ${
-                winning.length
-                  ? `<div class="win-chips">${winning
-                      .map((n: number) => `<span class="chip">${n}</span>`)
-                      .join('')}</div>`
-                  : `<div class="muted">Winning numbers unavailable</div>`
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-          openModal('Claimed Ticket', body, 'Close');
-          return;
-        }
-
-        // Sealed or scratched -> go scratch (play the tear)
-        try {
-          sfx.playKey('rip');
-        } catch {}
-
-        setCurrentItem(it.id);
-        try {
-          const sm = await import('../core/sceneManager'); // drop `.js` in TS source
-          const goto = (sm as { goto?: (scene: string) => void }).goto;
-
-          if (goto) {
-            goto('Scratch');
-          } else {
-            document
-              .querySelector<HTMLButtonElement>(
-                '.nav-btn[data-scene="Scratch"]'
-              )
-              ?.click();
-          }
-        } catch {
-          document
-            .querySelector<HTMLButtonElement>('.nav-btn[data-scene="Scratch"]')
-            ?.click();
-        }
-      });
-
-      // a11y: Enter/Space to open
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          card.click();
-        }
-      });
-      card.tabIndex = 0;
-
       this.grid.appendChild(card);
     }
 
-    // Optional: show an empty-state message
+    // Optional: empty-state
     if (!this.grid.children.length) {
       const empty = document.createElement('div');
       empty.className = 'inv-empty';
       empty.textContent = 'No tickets match your filters.';
       this.grid.appendChild(empty);
     }
+
+    // Ensure delegated handlers are in place
+    this.wireGridDelegationOnce();
   };
 }
