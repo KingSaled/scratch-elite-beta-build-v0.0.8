@@ -13,7 +13,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: false,
+    sourcemap: true,
     minify: false,
     // For itch: eliminate dynamic chunks to avoid iframe import quirks
     rollupOptions: {
@@ -28,3 +28,4 @@ export default defineConfig({
     cssCodeSplit: false,
   },
 });
+
