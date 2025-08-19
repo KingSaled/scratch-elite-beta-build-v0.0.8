@@ -110,10 +110,6 @@ sfx.register('nav', 'ui-nav', 3);
 sfx.register('btn', 'btn', 3);
 sfx.register('cancel', 'cancel', 2);
 sfx.register('toggle', 'toggle', 2);
-sfx.register('slide', 'slide', 2);
-
-sfx.register('modal-open', 'modal-open', 1);
-sfx.register('modal-close', 'modal-close', 1);
 
 sfx.register('rip', 'rip', 3);
 sfx.register('win', 'win', 2);
@@ -122,3 +118,4 @@ sfx.register('token', 'token', 2);
 sfx.register('levelup', 'levelup', 1);
 sfx.register('unlock', 'unlock', 1);
 sfx.register('badge', 'badge', 1);
+
