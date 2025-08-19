@@ -703,10 +703,12 @@ canvas {
   box-shadow: inset 0 0 0 2px #222b3a, inset 0 0 0 4px rgba(255, 255, 255, 0.02),
     0 8px 24px rgba(0, 0, 0, 0.35);
   cursor: pointer;
+  pointer-events: auto;
 }
 .vm-slot.loading {
   filter: saturate(0.75) brightness(0.92);
   opacity: 0.85;
+  pointer-events: none;
 }
 .vm-slot.loaded {
   filter: none;
