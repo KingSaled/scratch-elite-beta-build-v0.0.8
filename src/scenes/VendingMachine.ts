@@ -12,8 +12,6 @@ import { nextLevelXP } from '../core/progression.js';
 import { getDiscountedTotal, getEffects } from '../core/upgrades.js';
 import { toast } from '../ui/alerts.js';
 import { nextSerialForTier } from '../core/serials.js';
-import PRINT_MP3 from '../sfx/print.mp3?url';
-import PRINT_OGG from '../sfx/print.ogg?url';
 import { addLifetimeSpent } from '../core/state.js';
 import { sfx } from '../core/sfx.ts';
 
@@ -59,6 +57,19 @@ async function precacheAllTierArt() {
     if (v.tierBadge) urls.add(v.tierBadge);
   }
   await Promise.all([...urls].map(preloadImage));
+}
+
+const PRINT_BASE = `${import.meta.env.BASE_URL}sfx/print`;
+
+function pickPrintSrc(audio: HTMLAudioElement) {
+  // Prefer OGG if supported, otherwise MP3, otherwise default to OGG
+  const ogg = audio.canPlayType('audio/ogg; codecs="vorbis"');
+  if (ogg === 'probably' || ogg === 'maybe') return `${PRINT_BASE}.ogg`;
+
+  const mp3 = audio.canPlayType('audio/mpeg');
+  if (mp3 === 'probably' || mp3 === 'maybe') return `${PRINT_BASE}.mp3`;
+
+  return `${PRINT_BASE}.ogg`;
 }
 
 export class VendingMachine extends Container {
@@ -108,9 +119,7 @@ export class VendingMachine extends Container {
       this.printAudio = new Audio();
       this.printAudio.preload = 'auto';
 
-      const canMP3 = this.printAudio.canPlayType('audio/mpeg');
-      const canOGG = this.printAudio.canPlayType('audio/ogg');
-      this.printAudio.src = canMP3 ? PRINT_MP3 : canOGG ? PRINT_OGG : PRINT_MP3;
+      this.printAudio.src = pickPrintSrc(this.printAudio);
 
       const sync = () => {
         this.printAudio!.volume = sfx.isMuted() ? 0 : sfx.getVolume();
@@ -500,5 +509,3 @@ export class VendingMachine extends Container {
     }
   }
 }
-
-
