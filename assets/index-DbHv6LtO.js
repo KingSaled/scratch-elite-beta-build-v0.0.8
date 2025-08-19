@@ -45810,3 +45810,4 @@ const GoldFoilFilter$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: GoldFoilFilter
 }, Symbol.toStringTag, { value: "Module" }));
+//# sourceMappingURL=index-DbHv6LtO.js.map
