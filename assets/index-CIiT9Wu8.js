@@ -42737,8 +42737,6 @@ function nextSerialForTier(tierId) {
   saveNow();
   return `${prefix}-${String(next).padStart(6, "0")}`;
 }
-const PRINT_MP3 = "" + new URL("print-EnXaV7Qm.mp3", import.meta.url).href;
-const PRINT_OGG = "" + new URL("print-DRYkf-Gn.ogg", import.meta.url).href;
 const K_VOL = "sfxVol";
 const K_MUTE = "sfxMute";
 const SFX_BASE = `${"./"}sfx/`;
@@ -42837,9 +42835,6 @@ sfx.register("nav", "ui-nav", 3);
 sfx.register("btn", "btn", 3);
 sfx.register("cancel", "cancel", 2);
 sfx.register("toggle", "toggle", 2);
-sfx.register("slide", "slide", 2);
-sfx.register("modal-open", "modal-open", 1);
-sfx.register("modal-close", "modal-close", 1);
 sfx.register("rip", "rip", 3);
 sfx.register("win", "win", 2);
 sfx.register("token", "token", 2);
@@ -42885,6 +42880,14 @@ async function precacheAllTierArt() {
   }
   await Promise.all([...urls].map(preloadImage));
 }
+const PRINT_BASE = `${"./"}sfx/print`;
+function pickPrintSrc(audio) {
+  const ogg = audio.canPlayType('audio/ogg; codecs="vorbis"');
+  if (ogg === "probably" || ogg === "maybe") return `${PRINT_BASE}.ogg`;
+  const mp3 = audio.canPlayType("audio/mpeg");
+  if (mp3 === "probably" || mp3 === "maybe") return `${PRINT_BASE}.mp3`;
+  return `${PRINT_BASE}.ogg`;
+}
 class VendingMachine extends Container {
   panel = document.getElementById("vendorPanel");
   grid = document.getElementById("vendorGrid");
@@ -42923,9 +42926,7 @@ class VendingMachine extends Container {
     try {
       this.printAudio = new Audio();
       this.printAudio.preload = "auto";
-      const canMP3 = this.printAudio.canPlayType("audio/mpeg");
-      const canOGG = this.printAudio.canPlayType("audio/ogg");
-      this.printAudio.src = canMP3 ? PRINT_MP3 : canOGG ? PRINT_OGG : PRINT_MP3;
+      this.printAudio.src = pickPrintSrc(this.printAudio);
       const sync = () => {
         this.printAudio.volume = sfx.isMuted() ? 0 : sfx.getVolume();
       };
@@ -45810,4 +45811,4 @@ const GoldFoilFilter$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: GoldFoilFilter
 }, Symbol.toStringTag, { value: "Module" }));
-//# sourceMappingURL=index-DbHv6LtO.js.map
+//# sourceMappingURL=index-CIiT9Wu8.js.map
