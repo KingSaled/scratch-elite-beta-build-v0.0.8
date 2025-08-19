@@ -1,4 +1,4 @@
-import { A as Assets, C as Container, S as Sprite, B as BlurFilter, G as Graphics, T as Ticker } from "./index-BoJcktnZ.js";
+import { A as Assets, C as Container, S as Sprite, B as BlurFilter, G as Graphics, T as Ticker } from "./index-CU0kNmXq.js";
 class GoldFoilFilter {
   url;
   alpha;
@@ -151,4 +151,4 @@ class GoldFoilFilter {
 export {
   GoldFoilFilter as default
 };
-//# sourceMappingURL=GoldFoilFilter-ByhHHtaX.js.map
+//# sourceMappingURL=GoldFoilFilter-BfUnYJey.js.map

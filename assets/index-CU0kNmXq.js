@@ -36,8 +36,8 @@ const BrowserAdapter = {
    * @param height - height of the canvas
    */
   createCanvas: (width, height) => {
-    const canvas = document.createElement("canvas");
-    return canvas.width = width, canvas.height = height, canvas;
+    const canvas2 = document.createElement("canvas");
+    return canvas2.width = width, canvas2.height = height, canvas2;
   },
   getCanvasRenderingContext2D: () => CanvasRenderingContext2D,
   getWebGLRenderingContext: () => WebGLRenderingContext,
@@ -1148,24 +1148,24 @@ function requireObjectInspect() {
     single: /(['\\])/g
   };
   objectInspect = function inspect_(obj, options, depth, seen2) {
-    var opts = options || {};
-    if (has(opts, "quoteStyle") && !has(quotes, opts.quoteStyle)) {
+    var opts2 = options || {};
+    if (has(opts2, "quoteStyle") && !has(quotes, opts2.quoteStyle)) {
       throw new TypeError('option "quoteStyle" must be "single" or "double"');
     }
-    if (has(opts, "maxStringLength") && (typeof opts.maxStringLength === "number" ? opts.maxStringLength < 0 && opts.maxStringLength !== Infinity : opts.maxStringLength !== null)) {
+    if (has(opts2, "maxStringLength") && (typeof opts2.maxStringLength === "number" ? opts2.maxStringLength < 0 && opts2.maxStringLength !== Infinity : opts2.maxStringLength !== null)) {
       throw new TypeError('option "maxStringLength", if provided, must be a positive integer, Infinity, or `null`');
     }
-    var customInspect = has(opts, "customInspect") ? opts.customInspect : true;
+    var customInspect = has(opts2, "customInspect") ? opts2.customInspect : true;
     if (typeof customInspect !== "boolean" && customInspect !== "symbol") {
       throw new TypeError("option \"customInspect\", if provided, must be `true`, `false`, or `'symbol'`");
     }
-    if (has(opts, "indent") && opts.indent !== null && opts.indent !== "	" && !(parseInt(opts.indent, 10) === opts.indent && opts.indent > 0)) {
+    if (has(opts2, "indent") && opts2.indent !== null && opts2.indent !== "	" && !(parseInt(opts2.indent, 10) === opts2.indent && opts2.indent > 0)) {
       throw new TypeError('option "indent" must be "\\t", an integer > 0, or `null`');
     }
-    if (has(opts, "numericSeparator") && typeof opts.numericSeparator !== "boolean") {
+    if (has(opts2, "numericSeparator") && typeof opts2.numericSeparator !== "boolean") {
       throw new TypeError('option "numericSeparator", if provided, must be `true` or `false`');
     }
-    var numericSeparator = opts.numericSeparator;
+    var numericSeparator = opts2.numericSeparator;
     if (typeof obj === "undefined") {
       return "undefined";
     }
@@ -1176,7 +1176,7 @@ function requireObjectInspect() {
       return obj ? "true" : "false";
     }
     if (typeof obj === "string") {
-      return inspectString(obj, opts);
+      return inspectString(obj, opts2);
     }
     if (typeof obj === "number") {
       if (obj === 0) {
@@ -1189,14 +1189,14 @@ function requireObjectInspect() {
       var bigIntStr = String(obj) + "n";
       return numericSeparator ? addNumericSeparator(obj, bigIntStr) : bigIntStr;
     }
-    var maxDepth = typeof opts.depth === "undefined" ? 5 : opts.depth;
+    var maxDepth = typeof opts2.depth === "undefined" ? 5 : opts2.depth;
     if (typeof depth === "undefined") {
       depth = 0;
     }
     if (depth >= maxDepth && maxDepth > 0 && typeof obj === "object") {
       return isArray(obj) ? "[Array]" : "[Object]";
     }
-    var indent = getIndent(opts, depth);
+    var indent = getIndent(opts2, depth);
     if (typeof seen2 === "undefined") {
       seen2 = [];
     } else if (indexOf(seen2, obj) >= 0) {
@@ -1209,14 +1209,14 @@ function requireObjectInspect() {
       }
       if (noIndent) {
         var newOpts = {
-          depth: opts.depth
+          depth: opts2.depth
         };
-        if (has(opts, "quoteStyle")) {
-          newOpts.quoteStyle = opts.quoteStyle;
+        if (has(opts2, "quoteStyle")) {
+          newOpts.quoteStyle = opts2.quoteStyle;
         }
         return inspect_(value, newOpts, depth + 1, seen2);
       }
-      return inspect_(value, opts, depth + 1, seen2);
+      return inspect_(value, opts2, depth + 1, seen2);
     }
     if (typeof obj === "function" && !isRegExp(obj)) {
       var name = nameOf(obj);
@@ -1231,7 +1231,7 @@ function requireObjectInspect() {
       var s2 = "<" + $toLowerCase.call(String(obj.nodeName));
       var attrs = obj.attributes || [];
       for (var i2 = 0; i2 < attrs.length; i2++) {
-        s2 += " " + attrs[i2].name + "=" + wrapQuotes(quote(attrs[i2].value), "double", opts);
+        s2 += " " + attrs[i2].name + "=" + wrapQuotes(quote(attrs[i2].value), "double", opts2);
       }
       s2 += ">";
       if (obj.childNodes && obj.childNodes.length) {
@@ -1329,8 +1329,8 @@ function requireObjectInspect() {
     }
     return String(obj);
   };
-  function wrapQuotes(s2, defaultStyle, opts) {
-    var style = opts.quoteStyle || defaultStyle;
+  function wrapQuotes(s2, defaultStyle, opts2) {
+    var style = opts2.quoteStyle || defaultStyle;
     var quoteChar = quotes[style];
     return quoteChar + s2 + quoteChar;
   }
@@ -1503,16 +1503,16 @@ function requireObjectInspect() {
     }
     return typeof x2.nodeName === "string" && typeof x2.getAttribute === "function";
   }
-  function inspectString(str, opts) {
-    if (str.length > opts.maxStringLength) {
-      var remaining = str.length - opts.maxStringLength;
+  function inspectString(str, opts2) {
+    if (str.length > opts2.maxStringLength) {
+      var remaining = str.length - opts2.maxStringLength;
       var trailer = "... " + remaining + " more character" + (remaining > 1 ? "s" : "");
-      return inspectString($slice.call(str, 0, opts.maxStringLength), opts) + trailer;
+      return inspectString($slice.call(str, 0, opts2.maxStringLength), opts2) + trailer;
     }
-    var quoteRE = quoteREs[opts.quoteStyle || "single"];
+    var quoteRE = quoteREs[opts2.quoteStyle || "single"];
     quoteRE.lastIndex = 0;
     var s2 = $replace.call($replace.call(str, quoteRE, "\\$1"), /[\x00-\x1f]/g, lowbyte);
-    return wrapQuotes(s2, "single", opts);
+    return wrapQuotes(s2, "single", opts2);
   }
   function lowbyte(c2) {
     var n2 = c2.charCodeAt(0);
@@ -1546,12 +1546,12 @@ function requireObjectInspect() {
     }
     return true;
   }
-  function getIndent(opts, depth) {
+  function getIndent(opts2, depth) {
     var baseIndent;
-    if (opts.indent === "	") {
+    if (opts2.indent === "	") {
       baseIndent = "	";
-    } else if (typeof opts.indent === "number" && opts.indent > 0) {
-      baseIndent = $join.call(Array(opts.indent + 1), " ");
+    } else if (typeof opts2.indent === "number" && opts2.indent > 0) {
+      baseIndent = $join.call(Array(opts2.indent + 1), " ");
     } else {
       return null;
     }
@@ -3075,72 +3075,72 @@ function requireStringify() {
     }
     return values;
   };
-  var normalizeStringifyOptions = function normalizeStringifyOptions2(opts) {
-    if (!opts) {
+  var normalizeStringifyOptions = function normalizeStringifyOptions2(opts2) {
+    if (!opts2) {
       return defaults;
     }
-    if (typeof opts.allowEmptyArrays !== "undefined" && typeof opts.allowEmptyArrays !== "boolean") {
+    if (typeof opts2.allowEmptyArrays !== "undefined" && typeof opts2.allowEmptyArrays !== "boolean") {
       throw new TypeError("`allowEmptyArrays` option can only be `true` or `false`, when provided");
     }
-    if (typeof opts.encodeDotInKeys !== "undefined" && typeof opts.encodeDotInKeys !== "boolean") {
+    if (typeof opts2.encodeDotInKeys !== "undefined" && typeof opts2.encodeDotInKeys !== "boolean") {
       throw new TypeError("`encodeDotInKeys` option can only be `true` or `false`, when provided");
     }
-    if (opts.encoder !== null && typeof opts.encoder !== "undefined" && typeof opts.encoder !== "function") {
+    if (opts2.encoder !== null && typeof opts2.encoder !== "undefined" && typeof opts2.encoder !== "function") {
       throw new TypeError("Encoder has to be a function.");
     }
-    var charset = opts.charset || defaults.charset;
-    if (typeof opts.charset !== "undefined" && opts.charset !== "utf-8" && opts.charset !== "iso-8859-1") {
+    var charset = opts2.charset || defaults.charset;
+    if (typeof opts2.charset !== "undefined" && opts2.charset !== "utf-8" && opts2.charset !== "iso-8859-1") {
       throw new TypeError("The charset option must be either utf-8, iso-8859-1, or undefined");
     }
     var format = formats2["default"];
-    if (typeof opts.format !== "undefined") {
-      if (!has.call(formats2.formatters, opts.format)) {
+    if (typeof opts2.format !== "undefined") {
+      if (!has.call(formats2.formatters, opts2.format)) {
         throw new TypeError("Unknown format option provided.");
       }
-      format = opts.format;
+      format = opts2.format;
     }
     var formatter = formats2.formatters[format];
     var filter = defaults.filter;
-    if (typeof opts.filter === "function" || isArray(opts.filter)) {
-      filter = opts.filter;
+    if (typeof opts2.filter === "function" || isArray(opts2.filter)) {
+      filter = opts2.filter;
     }
     var arrayFormat;
-    if (opts.arrayFormat in arrayPrefixGenerators) {
-      arrayFormat = opts.arrayFormat;
-    } else if ("indices" in opts) {
-      arrayFormat = opts.indices ? "indices" : "repeat";
+    if (opts2.arrayFormat in arrayPrefixGenerators) {
+      arrayFormat = opts2.arrayFormat;
+    } else if ("indices" in opts2) {
+      arrayFormat = opts2.indices ? "indices" : "repeat";
     } else {
       arrayFormat = defaults.arrayFormat;
     }
-    if ("commaRoundTrip" in opts && typeof opts.commaRoundTrip !== "boolean") {
+    if ("commaRoundTrip" in opts2 && typeof opts2.commaRoundTrip !== "boolean") {
       throw new TypeError("`commaRoundTrip` must be a boolean, or absent");
     }
-    var allowDots = typeof opts.allowDots === "undefined" ? opts.encodeDotInKeys === true ? true : defaults.allowDots : !!opts.allowDots;
+    var allowDots = typeof opts2.allowDots === "undefined" ? opts2.encodeDotInKeys === true ? true : defaults.allowDots : !!opts2.allowDots;
     return {
-      addQueryPrefix: typeof opts.addQueryPrefix === "boolean" ? opts.addQueryPrefix : defaults.addQueryPrefix,
+      addQueryPrefix: typeof opts2.addQueryPrefix === "boolean" ? opts2.addQueryPrefix : defaults.addQueryPrefix,
       allowDots,
-      allowEmptyArrays: typeof opts.allowEmptyArrays === "boolean" ? !!opts.allowEmptyArrays : defaults.allowEmptyArrays,
+      allowEmptyArrays: typeof opts2.allowEmptyArrays === "boolean" ? !!opts2.allowEmptyArrays : defaults.allowEmptyArrays,
       arrayFormat,
       charset,
-      charsetSentinel: typeof opts.charsetSentinel === "boolean" ? opts.charsetSentinel : defaults.charsetSentinel,
-      commaRoundTrip: !!opts.commaRoundTrip,
-      delimiter: typeof opts.delimiter === "undefined" ? defaults.delimiter : opts.delimiter,
-      encode: typeof opts.encode === "boolean" ? opts.encode : defaults.encode,
-      encodeDotInKeys: typeof opts.encodeDotInKeys === "boolean" ? opts.encodeDotInKeys : defaults.encodeDotInKeys,
-      encoder: typeof opts.encoder === "function" ? opts.encoder : defaults.encoder,
-      encodeValuesOnly: typeof opts.encodeValuesOnly === "boolean" ? opts.encodeValuesOnly : defaults.encodeValuesOnly,
+      charsetSentinel: typeof opts2.charsetSentinel === "boolean" ? opts2.charsetSentinel : defaults.charsetSentinel,
+      commaRoundTrip: !!opts2.commaRoundTrip,
+      delimiter: typeof opts2.delimiter === "undefined" ? defaults.delimiter : opts2.delimiter,
+      encode: typeof opts2.encode === "boolean" ? opts2.encode : defaults.encode,
+      encodeDotInKeys: typeof opts2.encodeDotInKeys === "boolean" ? opts2.encodeDotInKeys : defaults.encodeDotInKeys,
+      encoder: typeof opts2.encoder === "function" ? opts2.encoder : defaults.encoder,
+      encodeValuesOnly: typeof opts2.encodeValuesOnly === "boolean" ? opts2.encodeValuesOnly : defaults.encodeValuesOnly,
       filter,
       format,
       formatter,
-      serializeDate: typeof opts.serializeDate === "function" ? opts.serializeDate : defaults.serializeDate,
-      skipNulls: typeof opts.skipNulls === "boolean" ? opts.skipNulls : defaults.skipNulls,
-      sort: typeof opts.sort === "function" ? opts.sort : null,
-      strictNullHandling: typeof opts.strictNullHandling === "boolean" ? opts.strictNullHandling : defaults.strictNullHandling
+      serializeDate: typeof opts2.serializeDate === "function" ? opts2.serializeDate : defaults.serializeDate,
+      skipNulls: typeof opts2.skipNulls === "boolean" ? opts2.skipNulls : defaults.skipNulls,
+      sort: typeof opts2.sort === "function" ? opts2.sort : null,
+      strictNullHandling: typeof opts2.strictNullHandling === "boolean" ? opts2.strictNullHandling : defaults.strictNullHandling
     };
   };
-  stringify_1 = function(object, opts) {
+  stringify_1 = function(object, opts2) {
     var obj = object;
-    var options = normalizeStringifyOptions(opts);
+    var options = normalizeStringifyOptions(opts2);
     var objKeys;
     var filter;
     if (typeof options.filter === "function") {
@@ -3384,58 +3384,58 @@ function requireParse() {
     }
     return parseObject(keys, val, options, valuesParsed);
   };
-  var normalizeParseOptions = function normalizeParseOptions2(opts) {
-    if (!opts) {
+  var normalizeParseOptions = function normalizeParseOptions2(opts2) {
+    if (!opts2) {
       return defaults;
     }
-    if (typeof opts.allowEmptyArrays !== "undefined" && typeof opts.allowEmptyArrays !== "boolean") {
+    if (typeof opts2.allowEmptyArrays !== "undefined" && typeof opts2.allowEmptyArrays !== "boolean") {
       throw new TypeError("`allowEmptyArrays` option can only be `true` or `false`, when provided");
     }
-    if (typeof opts.decodeDotInKeys !== "undefined" && typeof opts.decodeDotInKeys !== "boolean") {
+    if (typeof opts2.decodeDotInKeys !== "undefined" && typeof opts2.decodeDotInKeys !== "boolean") {
       throw new TypeError("`decodeDotInKeys` option can only be `true` or `false`, when provided");
     }
-    if (opts.decoder !== null && typeof opts.decoder !== "undefined" && typeof opts.decoder !== "function") {
+    if (opts2.decoder !== null && typeof opts2.decoder !== "undefined" && typeof opts2.decoder !== "function") {
       throw new TypeError("Decoder has to be a function.");
     }
-    if (typeof opts.charset !== "undefined" && opts.charset !== "utf-8" && opts.charset !== "iso-8859-1") {
+    if (typeof opts2.charset !== "undefined" && opts2.charset !== "utf-8" && opts2.charset !== "iso-8859-1") {
       throw new TypeError("The charset option must be either utf-8, iso-8859-1, or undefined");
     }
-    if (typeof opts.throwOnLimitExceeded !== "undefined" && typeof opts.throwOnLimitExceeded !== "boolean") {
+    if (typeof opts2.throwOnLimitExceeded !== "undefined" && typeof opts2.throwOnLimitExceeded !== "boolean") {
       throw new TypeError("`throwOnLimitExceeded` option must be a boolean");
     }
-    var charset = typeof opts.charset === "undefined" ? defaults.charset : opts.charset;
-    var duplicates = typeof opts.duplicates === "undefined" ? defaults.duplicates : opts.duplicates;
+    var charset = typeof opts2.charset === "undefined" ? defaults.charset : opts2.charset;
+    var duplicates = typeof opts2.duplicates === "undefined" ? defaults.duplicates : opts2.duplicates;
     if (duplicates !== "combine" && duplicates !== "first" && duplicates !== "last") {
       throw new TypeError("The duplicates option must be either combine, first, or last");
     }
-    var allowDots = typeof opts.allowDots === "undefined" ? opts.decodeDotInKeys === true ? true : defaults.allowDots : !!opts.allowDots;
+    var allowDots = typeof opts2.allowDots === "undefined" ? opts2.decodeDotInKeys === true ? true : defaults.allowDots : !!opts2.allowDots;
     return {
       allowDots,
-      allowEmptyArrays: typeof opts.allowEmptyArrays === "boolean" ? !!opts.allowEmptyArrays : defaults.allowEmptyArrays,
-      allowPrototypes: typeof opts.allowPrototypes === "boolean" ? opts.allowPrototypes : defaults.allowPrototypes,
-      allowSparse: typeof opts.allowSparse === "boolean" ? opts.allowSparse : defaults.allowSparse,
-      arrayLimit: typeof opts.arrayLimit === "number" ? opts.arrayLimit : defaults.arrayLimit,
+      allowEmptyArrays: typeof opts2.allowEmptyArrays === "boolean" ? !!opts2.allowEmptyArrays : defaults.allowEmptyArrays,
+      allowPrototypes: typeof opts2.allowPrototypes === "boolean" ? opts2.allowPrototypes : defaults.allowPrototypes,
+      allowSparse: typeof opts2.allowSparse === "boolean" ? opts2.allowSparse : defaults.allowSparse,
+      arrayLimit: typeof opts2.arrayLimit === "number" ? opts2.arrayLimit : defaults.arrayLimit,
       charset,
-      charsetSentinel: typeof opts.charsetSentinel === "boolean" ? opts.charsetSentinel : defaults.charsetSentinel,
-      comma: typeof opts.comma === "boolean" ? opts.comma : defaults.comma,
-      decodeDotInKeys: typeof opts.decodeDotInKeys === "boolean" ? opts.decodeDotInKeys : defaults.decodeDotInKeys,
-      decoder: typeof opts.decoder === "function" ? opts.decoder : defaults.decoder,
-      delimiter: typeof opts.delimiter === "string" || utils2.isRegExp(opts.delimiter) ? opts.delimiter : defaults.delimiter,
+      charsetSentinel: typeof opts2.charsetSentinel === "boolean" ? opts2.charsetSentinel : defaults.charsetSentinel,
+      comma: typeof opts2.comma === "boolean" ? opts2.comma : defaults.comma,
+      decodeDotInKeys: typeof opts2.decodeDotInKeys === "boolean" ? opts2.decodeDotInKeys : defaults.decodeDotInKeys,
+      decoder: typeof opts2.decoder === "function" ? opts2.decoder : defaults.decoder,
+      delimiter: typeof opts2.delimiter === "string" || utils2.isRegExp(opts2.delimiter) ? opts2.delimiter : defaults.delimiter,
       // eslint-disable-next-line no-implicit-coercion, no-extra-parens
-      depth: typeof opts.depth === "number" || opts.depth === false ? +opts.depth : defaults.depth,
+      depth: typeof opts2.depth === "number" || opts2.depth === false ? +opts2.depth : defaults.depth,
       duplicates,
-      ignoreQueryPrefix: opts.ignoreQueryPrefix === true,
-      interpretNumericEntities: typeof opts.interpretNumericEntities === "boolean" ? opts.interpretNumericEntities : defaults.interpretNumericEntities,
-      parameterLimit: typeof opts.parameterLimit === "number" ? opts.parameterLimit : defaults.parameterLimit,
-      parseArrays: opts.parseArrays !== false,
-      plainObjects: typeof opts.plainObjects === "boolean" ? opts.plainObjects : defaults.plainObjects,
-      strictDepth: typeof opts.strictDepth === "boolean" ? !!opts.strictDepth : defaults.strictDepth,
-      strictNullHandling: typeof opts.strictNullHandling === "boolean" ? opts.strictNullHandling : defaults.strictNullHandling,
-      throwOnLimitExceeded: typeof opts.throwOnLimitExceeded === "boolean" ? opts.throwOnLimitExceeded : false
+      ignoreQueryPrefix: opts2.ignoreQueryPrefix === true,
+      interpretNumericEntities: typeof opts2.interpretNumericEntities === "boolean" ? opts2.interpretNumericEntities : defaults.interpretNumericEntities,
+      parameterLimit: typeof opts2.parameterLimit === "number" ? opts2.parameterLimit : defaults.parameterLimit,
+      parseArrays: opts2.parseArrays !== false,
+      plainObjects: typeof opts2.plainObjects === "boolean" ? opts2.plainObjects : defaults.plainObjects,
+      strictDepth: typeof opts2.strictDepth === "boolean" ? !!opts2.strictDepth : defaults.strictDepth,
+      strictNullHandling: typeof opts2.strictNullHandling === "boolean" ? opts2.strictNullHandling : defaults.strictNullHandling,
+      throwOnLimitExceeded: typeof opts2.throwOnLimitExceeded === "boolean" ? opts2.throwOnLimitExceeded : false
     };
   };
-  parse = function(str, opts) {
-    var options = normalizeParseOptions(opts);
+  parse = function(str, opts2) {
+    var options = normalizeParseOptions(opts2);
     if (str === "" || str === null || typeof str === "undefined") {
       return options.plainObjects ? { __proto__: null } : {};
     }
@@ -4335,8 +4335,8 @@ function isWebGLSupported() {
     try {
       if (!settings.ADAPTER.getWebGLRenderingContext())
         return false;
-      const canvas = settings.ADAPTER.createCanvas();
-      let gl = canvas.getContext("webgl", contextOptions) || canvas.getContext("experimental-webgl", contextOptions);
+      const canvas2 = settings.ADAPTER.createCanvas();
+      let gl = canvas2.getContext("webgl", contextOptions) || canvas2.getContext("experimental-webgl", contextOptions);
       const success = !!gl?.getContextAttributes()?.stencil;
       if (gl) {
         const loseContext = gl.getExtension("WEBGL_lose_context");
@@ -4940,8 +4940,8 @@ function checkColumn(data, width, x2, top, bottom) {
       return false;
   return true;
 }
-function getCanvasBoundingBox(canvas) {
-  const { width, height } = canvas, context2 = canvas.getContext("2d", {
+function getCanvasBoundingBox(canvas2) {
+  const { width, height } = canvas2, context2 = canvas2.getContext("2d", {
     willReadFrequently: true
   });
   if (context2 === null)
@@ -4960,11 +4960,11 @@ function getCanvasBoundingBox(canvas) {
     --right;
   return ++right, ++bottom, new BoundingBox(left, top, right, bottom);
 }
-function trimCanvas(canvas) {
-  const boundingBox = getCanvasBoundingBox(canvas), { width, height } = boundingBox;
+function trimCanvas(canvas2) {
+  const boundingBox = getCanvasBoundingBox(canvas2), { width, height } = boundingBox;
   let data = null;
   if (!boundingBox.isEmpty()) {
-    const context2 = canvas.getContext("2d");
+    const context2 = canvas2.getContext("2d");
     if (context2 === null)
       throw new TypeError("Failed to get canvas 2D context");
     data = context2.getImageData(
@@ -7520,9 +7520,9 @@ const unknownContext = {};
 let context = unknownContext;
 function getTestContext() {
   if (context === unknownContext || context?.isContextLost()) {
-    const canvas = settings.ADAPTER.createCanvas();
+    const canvas2 = settings.ADAPTER.createCanvas();
     let gl;
-    settings.PREFER_ENV >= ENV.WEBGL2 && (gl = canvas.getContext("webgl2", {})), gl || (gl = canvas.getContext("webgl", {}) || canvas.getContext("experimental-webgl", {}), gl ? gl.getExtension("WEBGL_draw_buffers") : gl = null), context = gl;
+    settings.PREFER_ENV >= ENV.WEBGL2 && (gl = canvas2.getContext("webgl2", {})), gl || (gl = canvas2.getContext("webgl", {}) || canvas2.getContext("experimental-webgl", {}), gl ? gl.getExtension("WEBGL_draw_buffers") : gl = null), context = gl;
   }
   return context;
 }
@@ -8482,11 +8482,11 @@ class ContextSystem {
    * @see https://developer.mozilla.org/en/docs/Web/API/HTMLCanvasElement/getContext
    * @returns {WebGLRenderingContext} the WebGL context
    */
-  createContext(canvas, options) {
+  createContext(canvas2, options) {
     let gl;
-    if (settings.PREFER_ENV >= ENV.WEBGL2 && (gl = canvas.getContext("webgl2", options)), gl)
+    if (settings.PREFER_ENV >= ENV.WEBGL2 && (gl = canvas2.getContext("webgl2", options)), gl)
       this.webGLVersion = 2;
-    else if (this.webGLVersion = 1, gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options), !gl)
+    else if (this.webGLVersion = 1, gl = canvas2.getContext("webgl", options) || canvas2.getContext("experimental-webgl", options), !gl)
       throw new Error("This browser does not support WebGL. Try using the canvas renderer");
     return this.gl = gl, this.getExtensions(), this.gl;
   }
@@ -9166,8 +9166,8 @@ class Texture extends EventEmitter {
   /** A white texture of 16x16 size, used for graphics and other things Can not be destroyed. */
   static get WHITE() {
     if (!Texture._WHITE) {
-      const canvas = settings.ADAPTER.createCanvas(16, 16), context2 = canvas.getContext("2d");
-      canvas.width = 16, canvas.height = 16, context2.fillStyle = "white", context2.fillRect(0, 0, 16, 16), Texture._WHITE = new Texture(BaseTexture.from(canvas)), removeAllHandlers(Texture._WHITE), removeAllHandlers(Texture._WHITE.baseTexture);
+      const canvas2 = settings.ADAPTER.createCanvas(16, 16), context2 = canvas2.getContext("2d");
+      canvas2.width = 16, canvas2.height = 16, context2.fillStyle = "white", context2.fillRect(0, 0, 16, 16), Texture._WHITE = new Texture(BaseTexture.from(canvas2)), removeAllHandlers(Texture._WHITE), removeAllHandlers(Texture._WHITE.baseTexture);
     }
     return Texture._WHITE;
   }
@@ -13455,8 +13455,8 @@ const _SVGResource = class _SVGResource2 extends BaseImageResource {
         throw new Error("The SVG image must have width and height defined (in pixels), canvas API needs them.");
       let width = svgWidth * this.scale, height = svgHeight * this.scale;
       (this._overrideWidth || this._overrideHeight) && (width = this._overrideWidth || this._overrideHeight / svgHeight * svgWidth, height = this._overrideHeight || this._overrideWidth / svgWidth * svgHeight), width = Math.round(width), height = Math.round(height);
-      const canvas = this.source;
-      canvas.width = width, canvas.height = height, canvas._pixiId = `canvas_${uid()}`, canvas.getContext("2d").drawImage(tempImage, 0, 0, svgWidth, svgHeight, 0, 0, width, height), this._resolve(), this._resolve = null;
+      const canvas2 = this.source;
+      canvas2.width = width, canvas2.height = height, canvas2._pixiId = `canvas_${uid()}`, canvas2.getContext("2d").drawImage(tempImage, 0, 0, svgWidth, svgHeight, 0, 0, width, height), this._resolve(), this._resolve = null;
     };
   }
   /**
@@ -20276,10 +20276,10 @@ const TEMP_RECT = new Rectangle(), BYTES_PER_PIXEL = 4, _Extract = class _Extrac
    * @returns - A base64 encoded string of the texture.
    */
   async base64(target, format, quality, frame) {
-    const canvas = this.canvas(target, frame);
-    if (canvas.toBlob !== void 0)
+    const canvas2 = this.canvas(target, frame);
+    if (canvas2.toBlob !== void 0)
       return new Promise((resolve, reject) => {
-        canvas.toBlob((blob) => {
+        canvas2.toBlob((blob) => {
           if (!blob) {
             reject(new Error("ICanvas.toBlob failed!"));
             return;
@@ -20288,10 +20288,10 @@ const TEMP_RECT = new Rectangle(), BYTES_PER_PIXEL = 4, _Extract = class _Extrac
           reader.onload = () => resolve(reader.result), reader.onerror = reject, reader.readAsDataURL(blob);
         }, format, quality);
       });
-    if (canvas.toDataURL !== void 0)
-      return canvas.toDataURL(format, quality);
-    if (canvas.convertToBlob !== void 0) {
-      const blob = await canvas.convertToBlob({ type: format, quality });
+    if (canvas2.toDataURL !== void 0)
+      return canvas2.toDataURL(format, quality);
+    if (canvas2.convertToBlob !== void 0) {
+      const blob = await canvas2.convertToBlob({ type: format, quality });
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result), reader.onerror = reject, reader.readAsDataURL(blob);
@@ -22609,13 +22609,13 @@ const contextSettings = {
    * @param canvas - optional specification of the canvas to use for measuring.
    * @returns Measured width and height of the text.
    */
-  static measureText(text, style, wordWrap, canvas = _TextMetrics2._canvas) {
+  static measureText(text, style, wordWrap, canvas2 = _TextMetrics2._canvas) {
     wordWrap = wordWrap ?? style.wordWrap;
     const font = style.toFontString(), fontProperties = _TextMetrics2.measureFont(font);
     fontProperties.fontSize === 0 && (fontProperties.fontSize = style.fontSize, fontProperties.ascent = style.fontSize);
-    const context2 = canvas.getContext("2d", contextSettings);
+    const context2 = canvas2.getContext("2d", contextSettings);
     context2.font = font;
-    const lines = (wordWrap ? _TextMetrics2.wordWrap(text, style, canvas) : text).split(/(?:\r\n|\r|\n)/), lineWidths = new Array(lines.length);
+    const lines = (wordWrap ? _TextMetrics2.wordWrap(text, style, canvas2) : text).split(/(?:\r\n|\r|\n)/), lineWidths = new Array(lines.length);
     let maxLineWidth = 0;
     for (let i2 = 0; i2 < lines.length; i2++) {
       const lineWidth = _TextMetrics2._measureText(lines[i2], style.letterSpacing, context2);
@@ -22651,8 +22651,8 @@ const contextSettings = {
    * @param canvas - optional specification of the canvas to use for measuring.
    * @returns New string with new lines applied where required
    */
-  static wordWrap(text, style, canvas = _TextMetrics2._canvas) {
-    const context2 = canvas.getContext("2d", contextSettings);
+  static wordWrap(text, style, canvas2 = _TextMetrics2._canvas) {
+    const context2 = canvas2.getContext("2d", contextSettings);
     let width = 0, line = "", lines = "";
     const cache = /* @__PURE__ */ Object.create(null), { letterSpacing, whiteSpace } = style, collapseSpaces = _TextMetrics2.collapseSpaces(whiteSpace), collapseNewlines = _TextMetrics2.collapseNewlines(whiteSpace);
     let canPrependSpaces = !collapseSpaces;
@@ -22849,14 +22849,14 @@ const contextSettings = {
       ascent: 0,
       descent: 0,
       fontSize: 0
-    }, canvas = _TextMetrics2._canvas, context2 = _TextMetrics2._context;
+    }, canvas2 = _TextMetrics2._canvas, context2 = _TextMetrics2._context;
     context2.font = font;
     const metricsString = _TextMetrics2.METRICS_STRING + _TextMetrics2.BASELINE_SYMBOL, width = Math.ceil(context2.measureText(metricsString).width);
     let baseline2 = Math.ceil(context2.measureText(_TextMetrics2.BASELINE_SYMBOL).width);
     const height = Math.ceil(_TextMetrics2.HEIGHT_MULTIPLIER * baseline2);
     if (baseline2 = baseline2 * _TextMetrics2.BASELINE_MULTIPLIER | 0, width === 0 || height === 0)
       return _TextMetrics2._fonts[font] = properties, properties;
-    canvas.width = width, canvas.height = height, context2.fillStyle = "#f00", context2.fillRect(0, 0, width, height), context2.font = font, context2.textBaseline = "alphabetic", context2.fillStyle = "#000", context2.fillText(metricsString, 0, baseline2);
+    canvas2.width = width, canvas2.height = height, context2.fillStyle = "#f00", context2.fillRect(0, 0, width, height), context2.font = font, context2.textBaseline = "alphabetic", context2.fillStyle = "#000", context2.fillText(metricsString, 0, baseline2);
     const imagedata = context2.getImageData(0, 0, width, height).data, pixels = imagedata.length, line = width * 4;
     let i2 = 0, idx = 0, stop = false;
     for (i2 = 0; i2 < baseline2; ++i2) {
@@ -22897,16 +22897,16 @@ const contextSettings = {
    */
   static get _canvas() {
     if (!_TextMetrics2.__canvas) {
-      let canvas;
+      let canvas2;
       try {
         const c2 = new OffscreenCanvas(0, 0);
         if (c2.getContext("2d", contextSettings)?.measureText)
           return _TextMetrics2.__canvas = c2, c2;
-        canvas = settings.ADAPTER.createCanvas();
+        canvas2 = settings.ADAPTER.createCanvas();
       } catch {
-        canvas = settings.ADAPTER.createCanvas();
+        canvas2 = settings.ADAPTER.createCanvas();
       }
-      canvas.width = canvas.height = 10, _TextMetrics2.__canvas = canvas;
+      canvas2.width = canvas2.height = 10, _TextMetrics2.__canvas = canvas2;
     }
     return _TextMetrics2.__canvas;
   }
@@ -23441,11 +23441,11 @@ const defaultDestroyOptions = {
    * @param style - The style parameters
    * @param canvas - The canvas element for drawing text
    */
-  constructor(text, style, canvas) {
+  constructor(text, style, canvas2) {
     let ownCanvas = false;
-    canvas || (canvas = settings.ADAPTER.createCanvas(), ownCanvas = true), canvas.width = 3, canvas.height = 3;
-    const texture = Texture.from(canvas);
-    texture.orig = new Rectangle(), texture.trim = new Rectangle(), super(texture), this._ownCanvas = ownCanvas, this.canvas = canvas, this.context = canvas.getContext("2d", {
+    canvas2 || (canvas2 = settings.ADAPTER.createCanvas(), ownCanvas = true), canvas2.width = 3, canvas2.height = 3;
+    const texture = Texture.from(canvas2);
+    texture.orig = new Rectangle(), texture.trim = new Rectangle(), super(texture), this._ownCanvas = ownCanvas, this.canvas = canvas2, this.context = canvas2.getContext("2d", {
       // required for trimming to work without warnings
       willReadFrequently: true
     }), this._resolution = _Text2.defaultResolution ?? settings.RESOLUTION, this._autoResolution = _Text2.defaultAutoResolution, this._text = null, this._style = null, this._styleListener = null, this._font = "", this.text = text, this.style = style, this.localStyleID = -1;
@@ -23533,13 +23533,13 @@ const defaultDestroyOptions = {
   }
   /** Updates texture size based on canvas size. */
   updateTexture() {
-    const canvas = this.canvas;
+    const canvas2 = this.canvas;
     if (this._style.trim) {
-      const trimmed = trimCanvas(canvas);
-      trimmed.data && (canvas.width = trimmed.width, canvas.height = trimmed.height, this.context.putImageData(trimmed.data, 0, 0));
+      const trimmed = trimCanvas(canvas2);
+      trimmed.data && (canvas2.width = trimmed.width, canvas2.height = trimmed.height, this.context.putImageData(trimmed.data, 0, 0));
     }
     const texture = this._texture, style = this._style, padding = style.trim ? 0 : style.padding, baseTexture = texture.baseTexture;
-    texture.trim.width = texture._frame.width = canvas.width / this._resolution, texture.trim.height = texture._frame.height = canvas.height / this._resolution, texture.trim.x = -padding, texture.trim.y = -padding, texture.orig.width = texture._frame.width - padding * 2, texture.orig.height = texture._frame.height - padding * 2, this._onTextureUpdate(), baseTexture.setRealSize(canvas.width, canvas.height, this._resolution), texture.updateUvs(), this.dirty = false;
+    texture.trim.width = texture._frame.width = canvas2.width / this._resolution, texture.trim.height = texture._frame.height = canvas2.height / this._resolution, texture.trim.x = -padding, texture.trim.y = -padding, texture.orig.width = texture._frame.width - padding * 2, texture.orig.height = texture._frame.height - padding * 2, this._onTextureUpdate(), baseTexture.setRealSize(canvas2.width, canvas2.height, this._resolution), texture.updateUvs(), this.dirty = false;
   }
   /**
    * Renders the object using the WebGL renderer
@@ -24447,7 +24447,7 @@ function autoDetectFormat(data) {
       return formats[i2];
   return null;
 }
-function generateFillStyle(canvas, context2, style, resolution, lines, metrics) {
+function generateFillStyle(canvas2, context2, style, resolution, lines, metrics) {
   const fillStyle = style.fill;
   if (Array.isArray(fillStyle)) {
     if (fillStyle.length === 1)
@@ -24455,7 +24455,7 @@ function generateFillStyle(canvas, context2, style, resolution, lines, metrics) 
   } else
     return fillStyle;
   let gradient;
-  const dropShadowCorrection = style.dropShadow ? style.dropShadowDistance : 0, padding = style.padding || 0, width = canvas.width / resolution - dropShadowCorrection - padding * 2, height = canvas.height / resolution - dropShadowCorrection - padding * 2, fill = fillStyle.slice(), fillGradientStops = style.fillGradientStops.slice();
+  const dropShadowCorrection = style.dropShadow ? style.dropShadowDistance : 0, padding = style.padding || 0, width = canvas2.width / resolution - dropShadowCorrection - padding * 2, height = canvas2.height / resolution - dropShadowCorrection - padding * 2, fill = fillStyle.slice(), fillGradientStops = style.fillGradientStops.slice();
   if (!fillGradientStops.length) {
     const lengthPlus1 = fill.length + 1;
     for (let i2 = 1; i2 < lengthPlus1; ++i2)
@@ -24486,11 +24486,11 @@ function generateFillStyle(canvas, context2, style, resolution, lines, metrics) 
   }
   return gradient;
 }
-function drawGlyph(canvas, context2, metrics, x2, y2, resolution, style) {
+function drawGlyph(canvas2, context2, metrics, x2, y2, resolution, style) {
   const char = metrics.text, fontProperties = metrics.fontProperties;
   context2.translate(x2, y2), context2.scale(resolution, resolution);
   const tx = style.strokeThickness / 2, ty = -(style.strokeThickness / 2);
-  if (context2.font = style.toFontString(), context2.lineWidth = style.strokeThickness, context2.textBaseline = style.textBaseline, context2.lineJoin = style.lineJoin, context2.miterLimit = style.miterLimit, context2.fillStyle = generateFillStyle(canvas, context2, style, resolution, [char], metrics), context2.strokeStyle = style.stroke, style.dropShadow) {
+  if (context2.font = style.toFontString(), context2.lineWidth = style.strokeThickness, context2.textBaseline = style.textBaseline, context2.lineJoin = style.lineJoin, context2.miterLimit = style.miterLimit, context2.fillStyle = generateFillStyle(canvas2, context2, style, resolution, [char], metrics), context2.strokeStyle = style.stroke, style.dropShadow) {
     const dropShadowColor = style.dropShadowColor, dropShadowBlur = style.dropShadowBlur * resolution, dropShadowDistance = style.dropShadowDistance * resolution;
     context2.shadowColor = Color.shared.setValue(dropShadowColor).setAlpha(style.dropShadowAlpha).toRgbaString(), context2.shadowBlur = dropShadowBlur, context2.shadowOffsetX = Math.cos(style.dropShadowAngle) * dropShadowDistance, context2.shadowOffsetY = Math.sin(style.dropShadowAngle) * dropShadowDistance;
   } else
@@ -24662,18 +24662,18 @@ const _BitmapFont = class _BitmapFont2 {
     }, fontData.common[0] = {
       lineHeight: style.fontSize
     };
-    let positionX = 0, positionY = 0, canvas, context2, baseTexture, maxCharHeight = 0;
+    let positionX = 0, positionY = 0, canvas2, context2, baseTexture, maxCharHeight = 0;
     const textures = [];
     for (let i2 = 0; i2 < charsList.length; i2++) {
-      canvas || (canvas = settings.ADAPTER.createCanvas(), canvas.width = textureWidth, canvas.height = textureHeight, context2 = canvas.getContext("2d"), baseTexture = new BaseTexture(canvas, { resolution, ...baseOptions }), textures.push(new Texture(baseTexture)), fontData.page.push({
+      canvas2 || (canvas2 = settings.ADAPTER.createCanvas(), canvas2.width = textureWidth, canvas2.height = textureHeight, context2 = canvas2.getContext("2d"), baseTexture = new BaseTexture(canvas2, { resolution, ...baseOptions }), textures.push(new Texture(baseTexture)), fontData.page.push({
         id: textures.length - 1,
         file: ""
       }));
-      const character = charsList[i2], metrics = TextMetrics.measureText(character, style, false, canvas), width = metrics.width, height = Math.ceil(metrics.height), textureGlyphWidth = Math.ceil((style.fontStyle === "italic" ? 2 : 1) * width);
+      const character = charsList[i2], metrics = TextMetrics.measureText(character, style, false, canvas2), width = metrics.width, height = Math.ceil(metrics.height), textureGlyphWidth = Math.ceil((style.fontStyle === "italic" ? 2 : 1) * width);
       if (positionY >= textureHeight - height * resolution) {
         if (positionY === 0)
           throw new Error(`[BitmapFont] textureHeight ${textureHeight}px is too small (fontFamily: '${style.fontFamily}', fontSize: ${style.fontSize}px, char: '${character}')`);
-        --i2, canvas = null, context2 = null, baseTexture = null, positionY = 0, positionX = 0, maxCharHeight = 0;
+        --i2, canvas2 = null, context2 = null, baseTexture = null, positionY = 0, positionX = 0, maxCharHeight = 0;
         continue;
       }
       if (maxCharHeight = Math.max(height + metrics.fontProperties.descent, maxCharHeight), textureGlyphWidth * resolution + positionX >= lineWidth) {
@@ -24682,7 +24682,7 @@ const _BitmapFont = class _BitmapFont2 {
         --i2, positionY += maxCharHeight * resolution, positionY = Math.ceil(positionY), positionX = 0, maxCharHeight = 0;
         continue;
       }
-      drawGlyph(canvas, context2, metrics, positionX, positionY, resolution, style);
+      drawGlyph(canvas2, context2, metrics, positionX, positionY, resolution, style);
       const id = extractCharCode(metrics.text);
       fontData.char.push({
         id,
@@ -28108,7 +28108,7 @@ class ScratchView extends Container {
       bloomLevels: v2.overlayBloomLevels ?? 1
     };
     const helper = kind === "holo" ? new (await __vitePreload(async () => {
-      const { default: __vite_default__ } = await import("./HoloFoilFilter-CNY5-NUj.js");
+      const { default: __vite_default__ } = await import("./HoloFoilFilter-D1e3Fbo_.js");
       return { default: __vite_default__ };
     }, true ? [] : void 0, import.meta.url)).default(url2, {
       ...baseOpts,
@@ -28123,7 +28123,7 @@ class ScratchView extends Container {
       edgeGlowStrength: v2.edgeGlowStrength ?? 0.35,
       edgeGlowSpeed: v2.edgeGlowSpeed ?? 0.6
     }) : new (await __vitePreload(async () => {
-      const { default: __vite_default__ } = await import("./GoldFoilFilter-ByhHHtaX.js");
+      const { default: __vite_default__ } = await import("./GoldFoilFilter-BfUnYJey.js");
       return { default: __vite_default__ };
     }, true ? [] : void 0, import.meta.url)).default(url2, {
       ...baseOpts,
@@ -29813,9 +29813,9 @@ function refreshHeader() {
   applyMetaToHeader();
 }
 function getCssSize(app2) {
-  const canvas = app2.canvas ?? app2.renderer.canvas ?? document.querySelector("#app canvas");
-  const w2 = canvas?.clientWidth ?? window.innerWidth;
-  const h2 = canvas?.clientHeight ?? window.innerHeight;
+  const canvas2 = app2.canvas ?? app2.renderer.canvas ?? document.querySelector("#app canvas");
+  const w2 = canvas2?.clientWidth ?? window.innerWidth;
+  const h2 = canvas2?.clientHeight ?? window.innerHeight;
   return { w: w2, h: h2 };
 }
 let _mgr = null;
@@ -30802,26 +30802,29 @@ function setUIForScene(scene) {
 }
 window.__SET_SCENE_UI__ = (scene) => setUIForScene(scene);
 const appDiv = document.getElementById("app");
-const app = new Application();
-await app.init({
+const opts = {
   backgroundAlpha: 0,
   resizeTo: appDiv,
-  preference: "webgl",
   antialias: true,
-  // DPR cap to keep VRAM/CPU reasonable on high-DPI displays
   resolution: Math.min(window.devicePixelRatio || 1, 1.5),
-  // Perf hints for the browser/GPU selection
   powerPreference: "high-performance",
-  failIfMajorPerformanceCaveat: false
+  failIfMajorPerformanceCaveat: false,
+  // v8-only hint; harmless on v7
+  preference: "webgl"
+};
+let app;
+if (typeof Application.prototype?.init === "function") {
+  app = new Application();
+  await app.init(opts);
+} else {
+  app = new Application(opts);
+}
+const canvas = app.canvas ?? app.view;
+appDiv.appendChild(canvas);
+canvas.addEventListener("webglcontextrestored", () => {
+  console.warn("[Pixi] context restored – relayout current scene");
+  onResize();
 });
-appDiv.appendChild(app.canvas);
-app.canvas.addEventListener(
-  "webglcontextrestored",
-  () => {
-    console.warn("[Pixi] context restored – relayout current scene");
-    onResize();
-  }
-);
 const scenes = new SceneManager(app);
 function refreshHUD() {
   const m2 = document.getElementById("money");
@@ -30912,4 +30915,4 @@ export {
   Sprite as S,
   Ticker as T
 };
-//# sourceMappingURL=index-BoJcktnZ.js.map
+//# sourceMappingURL=index-CU0kNmXq.js.map
