@@ -25,15 +25,20 @@ const _imgCache = new Map<string, Promise<string>>();
 function preloadImage(url: string): Promise<string> {
   if (!url) return Promise.resolve('');
   if (_imgCache.has(url)) return _imgCache.get(url)!;
+
   const p = new Promise<string>((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.decoding = 'async';
-    img.loading = 'eager';
+    img.referrerPolicy = 'no-referrer';
+    // decoding hint; some CDNs skip firing onload reliably with 'async' on older browsers
+    img.decoding = 'auto';
+    // eager keeps the queue small on first paint
+    (img as any).loading = 'eager';
     img.onload = () => resolve(url);
-    img.onerror = () => resolve(url); // resolve anyway; we'll still set bg
+    img.onerror = () => resolve(url); // resolve anyway; we’ll still set a BG
     img.src = url;
   });
+
   _imgCache.set(url, p);
   return p;
 }
@@ -219,6 +224,9 @@ export class VendingMachine extends Container {
   }
 
   private render() {
+    let firstSelected = false;
+    const prevSelected = this.selectedTierId || null;
+
     this.grid.innerHTML = '';
 
     const tiers = getTiers()
@@ -234,20 +242,31 @@ export class VendingMachine extends Container {
       slot.setAttribute('role', 'button');
       slot.setAttribute('tabindex', '0');
 
-      // progressive BG load to avoid “pop-in”
+      // Progressive BG load to avoid “pop-in”
       const bgURL = v.bgImage || '';
       slot.classList.add('loading');
-      slot.style.setProperty('--bg', 'linear-gradient(#0f1723,#0b1220)'); // placeholder
+
+      // Always allow clicks, even while the image is loading
+      slot.style.pointerEvents = 'auto';
+
+      // Placeholder gradient immediately
+      slot.style.backgroundImage = 'linear-gradient(#0f1723,#0b1220)';
+      slot.style.backgroundSize = 'cover';
+      slot.style.backgroundPosition = 'center';
+      slot.style.backgroundRepeat = 'no-repeat';
+
       if (bgURL) {
-        // kick off cache; result not strictly needed here but warms pipeline
+        // Warm the cache
         preloadImage(bgURL);
+
+        // Load and then swap the BG
         const img = new Image();
         img.crossOrigin = 'anonymous';
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.src = bgURL;
+        img.referrerPolicy = 'no-referrer';
+        img.decoding = 'auto';
+        (img as any).loading = 'eager';
         img.onload = () => {
-          slot.style.setProperty('--bg', `url("${bgURL}")`);
+          slot.style.backgroundImage = `url("${bgURL}")`;
           slot.classList.remove('loading');
           slot.classList.add('loaded');
         };
@@ -255,22 +274,23 @@ export class VendingMachine extends Container {
           slot.classList.remove('loading');
           slot.classList.add('loaded');
         };
+        img.src = bgURL;
       } else {
         slot.classList.remove('loading');
         slot.classList.add('loaded');
       }
 
-      // title ribbon
+      // Title ribbon
       const name = document.createElement('div');
       name.className = 'vm-name';
       name.textContent = t.name || 'Ticket';
 
-      // price tag (bottom-left)
+      // Price tag (bottom-left)
       const price = document.createElement('div');
       price.className = 'vm-price';
       price.textContent = fmtMoney(t.price);
 
-      // tier badge (bottom-right)
+      // Tier badge (bottom-right)
       const badgeWrap = document.createElement('div');
       badgeWrap.className = 'vm-badge';
       const badgeURL = v.tierBadge as string | undefined;
@@ -278,8 +298,10 @@ export class VendingMachine extends Container {
         const badgeImg = document.createElement('img');
         badgeImg.src = badgeURL;
         badgeImg.alt = `${t.set || 'Tier'} badge`;
-        badgeImg.decoding = 'async';
-        badgeImg.loading = 'eager';
+        badgeImg.decoding = 'auto';
+        (badgeImg as any).loading = 'eager';
+        badgeImg.referrerPolicy = 'no-referrer';
+        badgeImg.crossOrigin = 'anonymous';
         badgeWrap.appendChild(badgeImg);
       } else {
         const pill = document.createElement('span');
@@ -287,7 +309,7 @@ export class VendingMachine extends Container {
         badgeWrap.appendChild(pill);
       }
 
-      // lock overlay if not unlocked
+      // Lock overlay if not unlocked
       const locked =
         !isTierUnlocked(t.id) &&
         (t.unlock.tokens > 0 ||
@@ -311,11 +333,20 @@ export class VendingMachine extends Container {
         };
       }
 
-      // build DOM tree
+      // Build DOM tree
       slot.append(name, price, badgeWrap);
       this.grid.appendChild(slot);
+
+      // Auto-select: prefer previous selection if still unlocked; else first unlocked
+      if (!locked) {
+        if (prevSelected ? t.id === prevSelected : !firstSelected) {
+          this.selectTier(slot, t.id);
+          firstSelected = true;
+        }
+      }
     }
 
+    // Ensure button reflects current selection state
     this.updateBuyButton();
   }
 
