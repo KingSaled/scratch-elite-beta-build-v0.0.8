@@ -1,0 +1,661 @@
+{
+  "tiers": [
+    {
+      "id": "t01",
+      "name": "Lucky Penny",
+      "set": "Townie",
+      "price": 1,
+      "evTarget": 0.92,
+      "unlock": { "vendorLevel": 1, "tokens": 0, "lifetimeWinnings": 0 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t01_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#10b981",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755098889/1._Lucky_Penny_BG_clltfk.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102107/1._Lucky_Penny_Cover_okvjjk.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755187630/Townie_Badge_v9kbj2.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t02",
+      "name": "Quick Pick",
+      "set": "Townie",
+      "price": 3,
+      "evTarget": 0.92,
+      "unlock": { "vendorLevel": 1, "tokens": 0, "lifetimeWinnings": 10 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t02_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#f59e0b",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755099168/2._Quick_Pick_BG_mijqfo.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102205/2._Quick_Pick_Cover_wtq8j8.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755187630/Townie_Badge_v9kbj2.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t03",
+      "name": "Street Fair",
+      "set": "Townie",
+      "price": 6,
+      "evTarget": 0.93,
+      "unlock": { "vendorLevel": 2, "tokens": 0, "lifetimeWinnings": 50 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t03_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#60a5fa",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755099184/3._Street_Fair_BG_ch1tpb.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102195/3._Street_Fair_Cover_kmcvpb.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755187630/Townie_Badge_v9kbj2.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t04",
+      "name": "Dollar Dream",
+      "set": "Townie",
+      "price": 10,
+      "evTarget": 0.93,
+      "unlock": { "vendorLevel": 2, "tokens": 1, "lifetimeWinnings": 100 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t04_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#22c55e",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755099271/4._Dollar_Dream_BG_otacru.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102186/4._Dollar_Dream_Cover_x7rs7k.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755187630/Townie_Badge_v9kbj2.png",
+        "font": "AldotheApache"
+      }
+    },
+
+    {
+      "id": "t05",
+      "name": "Neon Nites",
+      "set": "City",
+      "price": 20,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 3, "tokens": 2, "lifetimeWinnings": 200 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t05_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#a78bfa",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755099547/5._Neon_Nights_BG_dtpgpj.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102177/5._Neon_Nights_Cover_cusqof.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113862/City_Badge_j4v617.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t06",
+      "name": "Metro Gold",
+      "set": "City",
+      "price": 40,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 3, "tokens": 3, "lifetimeWinnings": 400 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t06_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#eab308",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755099854/6._Metro_Gold_BG_gchaec.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102167/6._Metro_Gold_Cover_koduq6.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113862/City_Badge_j4v617.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t07",
+      "name": "Highrise Hustle",
+      "set": "City",
+      "price": 70,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 4, "tokens": 4, "lifetimeWinnings": 800 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t07_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#22d3ee",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755100632/7._Highrise_Hustle_BG_ylcyjp.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102159/7._Highrise_Hustle_Cover_lczohf.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113862/City_Badge_j4v617.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t08",
+      "name": "Jackpot Avenue",
+      "set": "City",
+      "price": 100,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 4, "tokens": 5, "lifetimeWinnings": 1200 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t08_bg",
+        "foil": "none",
+        "holo": false,
+        "accentHex": "#f43f5e",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755100865/8._Jackpot_Avenue_BG_imoliq.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102151/8._Jackpot_Avenue_Cover_oxpf4m.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113862/City_Badge_j4v617.png",
+        "font": "AldotheApache"
+      }
+    },
+
+    {
+      "id": "t09",
+      "name": "Sunken Silver",
+      "set": "Treasure",
+      "price": 250,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 5, "tokens": 6, "lifetimeWinnings": 2500 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t09_bg",
+        "foil": "gold",
+        "overlayParallax": 0,
+        "holo": false,
+        "accentHex": "#94a3b8",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755101178/9._Sunken_Silver_BG_cc2txj.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102141/9._Sunken_Silver_Cover_z7ymrf.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113821/Treasure_Badge_dxbrjd.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t10",
+      "name": "Gilded Vault",
+      "set": "Treasure",
+      "price": 400,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 6, "tokens": 8, "lifetimeWinnings": 5000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t10_bg",
+        "foil": "gold",
+        "foilOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755093720/goldFoil_bvnl8r.png",
+        "overlayAlpha": 0.15,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": false,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": false,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": false,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "holo": false,
+        "accentHex": "#d4af37",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755101626/10._Gilded_Vault_BG_rxvalt.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102132/10._Gilded_Vault_Cover_helfbj.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113821/Treasure_Badge_dxbrjd.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t11",
+      "name": "Ruby Rush",
+      "set": "Treasure",
+      "price": 700,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 6, "tokens": 10, "lifetimeWinnings": 8000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t11_bg",
+        "foil": "gold",
+        "foilOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755093720/goldFoil_bvnl8r.png",
+        "overlayAlpha": 0.15,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": false,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": false,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": false,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "holo": false,
+        "accentHex": "#ef4444",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755101808/11._Ruby_Rush_BG_wwqxlq.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102125/11._Ruby_Rush_Cover_nnswop.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113821/Treasure_Badge_dxbrjd.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t12",
+      "name": "Crown Cache",
+      "set": "Treasure",
+      "price": 1000,
+      "evTarget": 0.94,
+      "unlock": { "vendorLevel": 7, "tokens": 12, "lifetimeWinnings": 12000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t12_bg",
+        "foil": "gold",
+        "foilOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755093720/goldFoil_bvnl8r.png",
+        "overlayAlpha": 0.15,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": false,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": false,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": false,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "holo": false,
+        "accentHex": "#fbbf24",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102289/12._Crown_Cache_BG_umyuxz.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755107042/12._Crown_Cache_Cover_hewmxt.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113821/Treasure_Badge_dxbrjd.png",
+        "font": "AldotheApache"
+      }
+    },
+
+    {
+      "id": "t13",
+      "name": "Phoenix Foil",
+      "set": "Mythic",
+      "price": 2500,
+      "evTarget": 0.95,
+      "unlock": { "vendorLevel": 8, "tokens": 14, "lifetimeWinnings": 25000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t13_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0.15,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": false,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": false,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": false,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#fb923c",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755102551/13._Phoenix_Foil_BG_k1oa1s.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755107021/13._Phoenix_Foil_Cover_wnc6x1.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113891/Mythic_Badge_wdj6ls.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t14",
+      "name": "Dragon's Hoard",
+      "set": "Mythic",
+      "price": 6000,
+      "evTarget": 0.95,
+      "unlock": { "vendorLevel": 9, "tokens": 16, "lifetimeWinnings": 40000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t14_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0.15,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": false,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": false,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": false,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#ef4444",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755103420/14._Dragon_Hoard_BG_wfhara.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755106998/14._Dragons_Hoard_Cover_kgxcys.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113891/Mythic_Badge_wdj6ls.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t15",
+      "name": "Aurora Prism",
+      "set": "Mythic",
+      "price": 12000,
+      "evTarget": 0.95,
+      "unlock": { "vendorLevel": 10, "tokens": 18, "lifetimeWinnings": 60000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t15_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0.15,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": false,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": false,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": false,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#60a5fa",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755103592/15._Aurora_Prism_BG_by7mjw.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755106975/15._Aurora_Prism_Cover_ddslkj.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113891/Mythic_Badge_wdj6ls.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t16",
+      "name": "King's Ransom",
+      "set": "Mythic",
+      "price": 25000,
+      "evTarget": 0.95,
+      "unlock": { "vendorLevel": 11, "tokens": 20, "lifetimeWinnings": 100000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t16_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0.15,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": false,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": false,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": false,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#facc15",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755103792/16._King_Ransom_BG_knw9m0.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755106366/16._King_Ransom_Cover_upqnm8.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113891/Mythic_Badge_wdj6ls.png",
+        "font": "AldotheApache"
+      }
+    },
+
+    {
+      "id": "t17",
+      "name": "Eclipse Hologram",
+      "set": "Legend",
+      "price": 50000,
+      "evTarget": 0.95,
+      "unlock": { "vendorLevel": 12, "tokens": 24, "lifetimeWinnings": 250000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t17_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": true,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": true,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": true,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#0ea5e9",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755104310/17._Eclipse_Hologram_BG_udpwjf.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755106320/17._Eclipse_Hologram_Cover_vpfiyp.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113920/Legend_Badge_hsujge.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t18",
+      "name": "Starlight Sigil",
+      "set": "Legend",
+      "price": 125000,
+      "evTarget": 0.95,
+      "unlock": { "vendorLevel": 13, "tokens": 28, "lifetimeWinnings": 500000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t18_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": true,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": true,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": true,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#8b5cf6",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755104621/18._Starlight_Sigil_BG_frxhcc.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755106296/18._Starlight_Sigil_cover_uhonnu.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113920/Legend_Badge_hsujge.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t19",
+      "name": "Quantum Fortune",
+      "set": "Legend",
+      "price": 300000,
+      "evTarget": 0.95,
+      "unlock": { "vendorLevel": 14, "tokens": 32, "lifetimeWinnings": 750000 },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t19_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": true,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": true,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": true,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#06b6d4",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755105041/19._Quantum_Fortune_BG_sn1spj.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755106259/19._Quantum_Fortune_Cover_ibd2ls.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113920/Legend_Badge_hsujge.png",
+        "font": "AldotheApache"
+      }
+    },
+    {
+      "id": "t20",
+      "name": "Mythmaker One",
+      "set": "Legend",
+      "price": 1000000,
+      "evTarget": 0.95,
+      "unlock": {
+        "vendorLevel": 15,
+        "tokens": 40,
+        "lifetimeWinnings": 1250000
+      },
+      "mechanics": {
+        "grid": [4, 3],
+        "winningNumbers": 4,
+        "hasBonusBox": false,
+        "multiplierChances": []
+      },
+      "visual": {
+        "bgKey": "t20_bg",
+        "holo": true,
+        "holoOverlay": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755090485/holoTexture_jckxxw.png",
+        "overlayAlpha": 0,
+        "overlayParallax": 0,
+        "overlaySweepSpeed": 5,
+        "overlaySweepAlpha": 0.22,
+        "overlaySweepTilt": -90,
+        "overlayEdgeGlow": true,
+        "overlayEdgeGlowStrength": 0.9,
+        "overlaySparkles": true,
+        "overlaySparkleCount": 150,
+        "overlaySparkleSize": 4,
+        "overlaySparkleSpeedMin": 1.4,
+        "overlaySparkleSpeedMax": 2.6,
+        "overlayRainbow": true,
+        "overlayRainbowAlpha": 0.2,
+        "overlayRainbowSpeed": 4,
+        "accentHex": "#fde68a",
+        "bgImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755183686/20.Mythmaker_One_BG_nwrtrq.png",
+        "coverImage": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755105908/20._Mythmaker_One_Cover_qaouti.png",
+        "tierBadge": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755113920/Legend_Badge_hsujge.png",
+        "font": "AldotheApache"
+      }
+    }
+  ]
+}

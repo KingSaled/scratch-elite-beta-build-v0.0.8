@@ -1,0 +1,79 @@
+{
+  "upgrades": [
+    {
+      "id": "scratch_radius",
+      "name": "Scratch Radius",
+      "type": "ux",
+      "levelCap": 3,
+      "costPerLevel": [1000, 5000, 15000],
+      "desc": "Increase how many tiles reveal per scratch (Single → Cross → 3×3 → Full Card).",
+      "image": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755196127/Scratch_Radius_tdry6g.png",
+      "effect": {}
+    },
+    {
+      "id": "bulk_discount",
+      "name": "Bulk Discount",
+      "type": "econ",
+      "levelCap": 3,
+      "baseCost": 1000,
+      "costGrowth": 2,
+      "desc": "Lower total cost when buying tickets at the vendor.",
+      "image": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755196142/Bulk_Discount_rokpn3.png",
+      "effect": {
+        "ticketDiscountPct": { "levels": [2, 5, 10] }
+      }
+    },
+    {
+      "id": "prize_mult",
+      "name": "Prize Multiplier",
+      "type": "econ",
+      "levelCap": 3,
+      "baseCost": 2000,
+      "costGrowth": 2,
+      "desc": "Increase payouts on wins.",
+      "image": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755196134/Prize_Multiplier_zzxvey.png",
+      "effect": {
+        "prizeMultiplierPct": { "levels": [2, 5, 10] }
+      }
+    },
+    {
+      "id": "scratch_radius_pro",
+      "name": "Scratch Radius Pro",
+      "type": "ux",
+      "levelCap": 2,
+      "costPerLevel": [100000, 250000],
+      "desc": "Scratch multiple identical tickets in parallel (same tier, side-by-side).",
+      "image": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755196130/Scratch_Radius_Pro_r7pqry.png",
+      "requires": { "scratch_radius": 3 },
+      "effect": {
+        "scratchParallelMax": { "levels": [2, 3] }
+      }
+    },
+    {
+      "id": "bulk_discount_pro",
+      "name": "Bulk Discount Pro",
+      "type": "econ",
+      "levelCap": 3,
+      "costPerLevel": [25000, 60000, 150000],
+      "desc": "Heavier vendor discount on bulk purchases.",
+      "image": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755196146/Bulk_Discount_Pro_rsxhnd.png",
+      "requires": { "bulk_discount": 3 },
+      "effect": {
+        "ticketDiscountPct": { "levels": [12, 15, 20] }
+      }
+    },
+    {
+      "id": "prize_mult_pro",
+      "name": "Prize Multiplier Pro",
+      "type": "econ",
+      "levelCap": 3,
+      "costPerLevel": [50000, 125000, 300000],
+      "desc": "Stronger payout multiplier for big wins.",
+      "image": "https://res.cloudinary.com/dnj7eekjm/image/upload/v1755196138/Prize_Multiplier_Pro_ow8ds5.png",
+      "requires": { "prize_mult": 3 },
+      "effect": {
+        "prizeMultiplierPct": { "levels": [12, 15, 20] }
+      }
+    }
+  ]
+}

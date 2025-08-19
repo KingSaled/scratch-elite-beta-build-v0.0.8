@@ -1,0 +1,202 @@
+/* @ts-nocheck */
+import {
+  Container,
+  Sprite,
+  Graphics,
+  Assets,
+  BlurFilter,
+  Ticker,
+} from 'pixi.js';
+
+interface FoilOpts {
+  alpha?: number;
+  radius?: number;
+
+  bloom?: boolean;
+  bloomStrength?: number;
+  bloomLevels?: number;
+
+  sparkles?: boolean;
+  sparkleRate?: number; // spawns/sec
+  sparkleMin?: number; // px
+  sparkleMax?: number; // px
+  sparkleAlpha?: number; // 0..1 peak alpha
+}
+
+interface Spark { g: any; t: number; life: number }
+
+export default class GoldFoilFilter {
+  url: string;
+  alpha: number;
+  radius: number;
+
+  bloom: boolean;
+  bloomStrength: number;
+  bloomLevels: number;
+
+  sparkles: boolean;
+  sparkleRate: number;
+  sparkleMin: number;
+  sparkleMax: number;
+  sparkleAlpha: number;
+
+  sprite: any;
+  mask: any;
+  private _children: any[] = [];
+  private _sparks: Spark[] = [];
+  private _tickerFn?: (d: number) => void;
+  private _rafId: number | null = null;
+
+  constructor(url: string, opts: FoilOpts = {}) {
+    this.url = url || '';
+    this.alpha = opts.alpha ?? 0.26;
+    this.radius = opts.radius ?? 20;
+
+    this.bloom = !!opts.bloom;
+    this.bloomStrength = opts.bloomStrength ?? 1.1;
+    this.bloomLevels = Math.max(0, Math.floor(opts.bloomLevels ?? 1));
+
+    this.sparkles = opts.sparkles ?? true;
+    this.sparkleRate = Math.max(0, opts.sparkleRate ?? 0.1);
+    this.sparkleMin = Math.max(2, Math.floor(opts.sparkleMin ?? 6));
+    this.sparkleMax = Math.max(
+      this.sparkleMin,
+      Math.floor(opts.sparkleMax ?? 14)
+    );
+    this.sparkleAlpha = Math.min(1, Math.max(0, opts.sparkleAlpha ?? 0.18));
+
+    this.sprite = null;
+    this.mask = null;
+  }
+
+  async install(target: any, width: number, height: number): Promise<any> {
+    if (!this.url) return null;
+    const tex = await Assets.load(this.url);
+
+    const root = new Container();
+    (root).eventMode = 'none';
+
+    if (this.bloom && this.bloomLevels > 0) {
+      for (let i = 0; i < this.bloomLevels; i++) {
+        const b = new Sprite(tex);
+        b.width = Math.round(width);
+        b.height = Math.round(height);
+        b.alpha = (this.alpha * 0.5) / this.bloomLevels;
+        (b).eventMode = 'none';
+        const blur = new BlurFilter();
+        blur.quality = 1;
+        blur.strength = (i + 1) * 5 * (this.bloomStrength ?? 1);
+        b.filters = [blur];
+        root.addChild(b);
+        this._children.push(b);
+      }
+    }
+
+    const spr = new Sprite(tex);
+    spr.width = Math.round(width);
+    spr.height = Math.round(height);
+    spr.alpha = this.alpha;
+    (spr).eventMode = 'none';
+    root.addChild(spr);
+    this._children.push(spr);
+
+    const mask = new Graphics()
+      .roundRect(0, 0, Math.round(width), Math.round(height), this.radius)
+      .fill(0xffffff);
+
+    target.addChild(root, mask);
+    (root).mask = mask;
+
+    // assign BEFORE starting loops
+    this.sprite = root;
+    this.mask = mask;
+
+    // Ticker + RAF fallback
+    this._tickerFn = (delta: number) =>
+      this._tick(delta / 60, width, height, root);
+    Ticker.shared.add(this._tickerFn);
+    Ticker.shared.start();
+
+    const rafLoop = () => {
+      this._tick(1 / 60, width, height, root);
+      this._rafId = requestAnimationFrame(rafLoop as any);
+    };
+    this._rafId = requestAnimationFrame(rafLoop as any);
+
+    return root;
+  }
+
+  private _spawnSpark(width: number, height: number, parent: any) {
+    const s =
+      this.sparkleMin + Math.random() * (this.sparkleMax - this.sparkleMin);
+    const g = new Graphics().circle(0, 0, s / 2).fill(0xffffff);
+    (g).eventMode = 'none';
+    g.x = Math.random() * width;
+    g.y = Math.random() * height;
+    g.alpha = 0.0;
+    const blur = new BlurFilter();
+    blur.quality = 1;
+    blur.strength = s * 0.6;
+    (g).filters = [blur];
+    parent.addChild(g);
+    this._sparks.push({ g, t: 0, life: 1.4 + Math.random() * 0.8 });
+  }
+
+  private _tick(dt: number, width: number, height: number, parent: any) {
+    if (this.sparkles && Math.random() < this.sparkleRate * dt) {
+      this._spawnSpark(width, height, parent);
+    }
+    const next: Spark[] = [];
+    for (const sp of this._sparks) {
+      sp.t += dt;
+      const half = sp.life * 0.4;
+      const a =
+        sp.t < half
+          ? (sp.t / half) * this.sparkleAlpha
+          : Math.max(
+              0,
+              (1 - (sp.t - half) / (sp.life - half)) * this.sparkleAlpha
+            );
+      sp.g.alpha = a;
+      if (sp.t >= sp.life) {
+        try {
+          sp.g.destroy?.();
+        } catch {}
+      } else {
+        next.push(sp);
+      }
+    }
+    this._sparks = next;
+  }
+
+  updateParallax(nx: number, ny: number, strength: number) {
+    if (!this.sprite) return;
+    this.sprite.x = Math.round(-nx * strength);
+    this.sprite.y = Math.round(-ny * strength);
+  }
+
+  destroy() {
+    if (this._tickerFn) Ticker.shared.remove(this._tickerFn);
+    if (this._rafId != null) cancelAnimationFrame(this._rafId);
+    try {
+      this._children.forEach((c: any) => c.destroy?.());
+    } catch {}
+    try {
+      this._sparks.forEach((s) => s.g?.destroy?.());
+    } catch {}
+    try {
+      this.sprite?.destroy?.();
+    } catch {}
+    try {
+      this.mask?.destroy?.();
+    } catch {}
+    this._children = [];
+    this._sparks = [];
+    this.sprite = null;
+    this.mask = null;
+  }
+
+  get uniforms() {
+    return { uMouse: new Float32Array([0, 0]), uTime: 0 };
+  }
+}

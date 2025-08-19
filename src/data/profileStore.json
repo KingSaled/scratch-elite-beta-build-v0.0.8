@@ -1,0 +1,108 @@
+{
+  "items": [
+    {
+      "id": "bg_neon",
+      "category": "background",
+      "name": "Neon Night",
+      "price": { "money": 250 },
+      "preview": "gradient",
+      "css": {
+        "backgroundImage": "linear-gradient(135deg,#0ea5e980,#1d4ed880 60%,#22d3ee66 100%)"
+      }
+    },
+    {
+      "id": "bg_treasure",
+      "category": "background",
+      "name": "Treasure Vault",
+      "price": { "money": 400 },
+      "preview": "gradient",
+      "css": {
+        "backgroundImage": "radial-gradient(1200px 600px at 20% -10%,#fbbf2480 0%,#0b0e1380 60%)"
+      }
+    },
+
+    {
+      "id": "border_silver",
+      "category": "avatarBorder",
+      "name": "Silver Ring",
+      "price": { "money": 150 },
+      "preview": "border",
+      "css": {
+        "boxShadow": "0 0 0 3px #94a3b880, 0 0 10px #94a3b844"
+      }
+    },
+    {
+      "id": "border_gold",
+      "category": "avatarBorder",
+      "name": "Gold Crown",
+      "price": { "money": 350 },
+      "preview": "border",
+      "css": {
+        "boxShadow": "0 0 0 3px #f3c969cc, 0 0 12px #f3c96980"
+      }
+    },
+
+    {
+      "id": "theme_ocean",
+      "category": "theme",
+      "name": "Oceanic",
+      "price": { "money": 500 },
+      "vars": {
+        "--accent": "#22d3ee",
+        "--nav-accent": "#22d3ee",
+        "--text": "#e6fbff"
+      }
+    },
+    {
+      "id": "theme_mythic",
+      "category": "theme",
+      "name": "Mythic Glow",
+      "price": { "tokens": 2 },
+      "vars": {
+        "--accent": "#a78bfa",
+        "--nav-accent": "#a78bfa",
+        "--text": "#eef0ff"
+      }
+    },
+
+    {
+      "id": "title_lucky",
+      "category": "title",
+      "name": "Lucky",
+      "price": { "money": 100 }
+    },
+    {
+      "id": "title_highroller",
+      "category": "title",
+      "name": "High Roller",
+      "price": { "tokens": 1 }
+    },
+
+    {
+      "id": "pet_slime",
+      "category": "pet",
+      "name": "Lucky Slime",
+      "price": { "tokens": 2 },
+      "emoji": "🟢",
+      "bonus": 0.01
+    },
+    {
+      "id": "pet_dragon",
+      "category": "pet",
+      "name": "Hoard Dragon",
+      "price": { "tokens": 8 },
+      "emoji": "🐉",
+      "bonus": 0.05
+    },
+
+    {
+      "id": "petBorder_glow",
+      "category": "petBorder",
+      "name": "Pet Aura",
+      "price": { "money": 300 },
+      "css": {
+        "boxShadow": "0 0 0 3px #60a5fa99, 0 0 18px #60a5fa66"
+      }
+    }
+  ]
+}
