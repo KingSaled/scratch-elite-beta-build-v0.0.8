@@ -22,7 +22,9 @@ const scenePanels: Partial<Record<SceneKey, string[]>> = {
 };
 
 function setUIForScene(scene: SceneKey) {
-  const want = new Set((scenePanels[scene] ?? []).map((id) => id.toLowerCase()));
+  const want = new Set(
+    (scenePanels[scene] ?? []).map((id) => id.toLowerCase())
+  );
   const ALL =
     '#vendorPanel, #inventoryPanel, #upgradesPanel, #statsPanel, #profilePanel, #settingsPanel, #winbar';
   document.querySelectorAll<HTMLElement>(ALL).forEach((el) => {
@@ -44,7 +46,6 @@ const opts: any = {
   powerPreference: 'high-performance',
   failIfMajorPerformanceCaveat: false,
   // v8-only hint; harmless on v7
-  // @ts-expect-error PIXI v7 does not have this option typed
   preference: 'webgl',
 };
 
@@ -62,7 +63,9 @@ if (typeof (Application as any).prototype?.init === 'function') {
 
 // Helper to get the canvas across v8 (canvas) and v7 (view)
 const getCanvas = (): HTMLCanvasElement | null =>
-  (app?.canvas as HTMLCanvasElement) ?? (app?.view as HTMLCanvasElement) ?? null;
+  (app?.canvas as HTMLCanvasElement) ??
+  (app?.view as HTMLCanvasElement) ??
+  null;
 
 // Append canvas after init so it definitely exists
 const canvas = getCanvas();
@@ -94,7 +97,9 @@ if (!state.flags) state.flags = {};
 if (typeof state.flags.autoReturn === 'undefined') {
   state.flags.autoReturn = true;
   saveNow();
-  const prefAuto = document.getElementById('prefAutoReturn') as HTMLInputElement | null;
+  const prefAuto = document.getElementById(
+    'prefAutoReturn'
+  ) as HTMLInputElement | null;
   if (prefAuto) prefAuto.checked = true;
 }
 
@@ -117,7 +122,9 @@ window.addEventListener('keydown', kick, { once: true });
 
 /* Reduce the “FOUC” warning */
 if (document.readyState !== 'complete') {
-  await new Promise<void>((r) => window.addEventListener('load', () => r(), { once: true }));
+  await new Promise<void>((r) =>
+    window.addEventListener('load', () => r(), { once: true })
+  );
 }
 if ((document as any).fonts?.ready) {
   try {
@@ -126,23 +133,25 @@ if ((document as any).fonts?.ready) {
 }
 
 /* ---------------- NAV ---------------- */
-document.querySelectorAll<HTMLButtonElement>('.nav-btn[data-scene]').forEach((btn) => {
-  btn.addEventListener(
-    'pointerdown',
-    () => {
-      const target = btn.dataset.scene as SceneKey;
-      scenes.goto(target);
-      setUIForScene(target);
+document
+  .querySelectorAll<HTMLButtonElement>('.nav-btn[data-scene]')
+  .forEach((btn) => {
+    btn.addEventListener(
+      'pointerdown',
+      () => {
+        const target = btn.dataset.scene as SceneKey;
+        scenes.goto(target);
+        setUIForScene(target);
 
-      const settingsPanel = document.getElementById('settingsPanel')!;
-      if (target === 'Settings') settingsPanel.classList.toggle('show');
-      else settingsPanel.classList.remove('show');
+        const settingsPanel = document.getElementById('settingsPanel')!;
+        if (target === 'Settings') settingsPanel.classList.toggle('show');
+        else settingsPanel.classList.remove('show');
 
-      queueMicrotask(onResize);
-    },
-    { passive: true }
-  ); // keep it passive = faster scrolling/gestures
-});
+        queueMicrotask(onResize);
+      },
+      { passive: true }
+    ); // keep it passive = faster scrolling/gestures
+  });
 
 /* ---------------- CLAIM BUTTON ---------------- */
 (document.getElementById('claim') as HTMLButtonElement).style.display = 'none';
@@ -155,7 +164,10 @@ function cssCanvasSize() {
   const rect = appDiv.getBoundingClientRect(); // measure container, not canvas
   c.style.width = rect.width + 'px';
   c.style.height = rect.height + 'px';
-  return { w: Math.max(1, Math.round(rect.width)), h: Math.max(1, Math.round(rect.height)) };
+  return {
+    w: Math.max(1, Math.round(rect.width)),
+    h: Math.max(1, Math.round(rect.height)),
+  };
 }
 
 function onResize() {
