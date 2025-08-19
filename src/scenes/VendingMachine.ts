@@ -12,8 +12,8 @@ import { nextLevelXP } from '../core/progression.js';
 import { getDiscountedTotal, getEffects } from '../core/upgrades.js';
 import { toast } from '../ui/alerts.js';
 import { nextSerialForTier } from '../core/serials.js';
-import PRINT_MP3 from '../sfx/print.mp3?url';
-import PRINT_OGG from '../sfx/print.ogg?url';
+import PRINT_MP3 from './sfx/print.mp3?url';
+import PRINT_OGG from './sfx/print.ogg?url';
 import { addLifetimeSpent } from '../core/state.js';
 import { sfx } from '../core/sfx.ts';
 
@@ -500,3 +500,4 @@ export class VendingMachine extends Container {
     }
   }
 }
+
