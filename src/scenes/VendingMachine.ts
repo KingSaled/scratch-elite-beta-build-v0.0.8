@@ -242,46 +242,38 @@ export class VendingMachine extends Container {
       slot.setAttribute('role', 'button');
       slot.setAttribute('tabindex', '0');
 
-      // Always allow clicks, even while image is loading
+      // Keep tiles clickable regardless of image state
       slot.style.pointerEvents = 'auto';
 
-      // Base styling (gradient fallback)
+      // Placeholder gradient immediately (shorthand with !important)
       slot.style.setProperty(
-        'background-image',
-        'linear-gradient(#0f1723,#0b1220)',
+        'background',
+        'linear-gradient(#0f1723,#0b1220) center/cover no-repeat',
         'important'
       );
-      slot.style.backgroundSize = 'cover';
-      slot.style.backgroundPosition = 'center';
-      slot.style.backgroundRepeat = 'no-repeat';
 
-      // Progressive BG: set the URL immediately so the browser starts fetching,
-      // then also try an <img> preload; either way the slot stays clickable.
       const bgURL = v.bgImage || '';
+
       if (bgURL) {
-        // Set the real BG right away (with gradient behind it)
+        // Set real BG immediately so the browser fetches it (keep gradient behind it)
         slot.style.setProperty(
-          'background-image',
-          `url("${bgURL}"), linear-gradient(#0f1723,#0b1220)`,
+          'background',
+          `url("${bgURL}") center/cover no-repeat, linear-gradient(#0f1723,#0b1220) center/cover no-repeat`,
           'important'
         );
 
-        // Optional warm-up (doesn't block UI)
+        // Optional warm-up (lets us re-assert the bg if CSS tries to override)
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.referrerPolicy = 'no-referrer';
         img.decoding = 'auto';
         (img as any).loading = 'eager';
         img.onload = () => {
-          // Ensure our URL sticks even if external CSS tries to override
           slot.style.setProperty(
-            'background-image',
-            `url("${bgURL}"), linear-gradient(#0f1723,#0b1220)`,
+            'background',
+            `url("${bgURL}") center/cover no-repeat, linear-gradient(#0f1723,#0b1220) center/cover no-repeat`,
             'important'
           );
-        };
-        img.onerror = () => {
-          // Keep gradient fallback; still clickable
         };
         img.src = bgURL;
       }
@@ -291,12 +283,12 @@ export class VendingMachine extends Container {
       name.className = 'vm-name';
       name.textContent = t.name || 'Ticket';
 
-      // Price tag (bottom-left)
+      // Price tag
       const price = document.createElement('div');
       price.className = 'vm-price';
       price.textContent = fmtMoney(t.price);
 
-      // Tier badge (bottom-right)
+      // Tier badge
       const badgeWrap = document.createElement('div');
       badgeWrap.className = 'vm-badge';
       const badgeURL = v.tierBadge as string | undefined;
@@ -308,8 +300,7 @@ export class VendingMachine extends Container {
         (badgeImg as any).loading = 'eager';
         badgeImg.referrerPolicy = 'no-referrer';
         badgeImg.crossOrigin = 'anonymous';
-        // make sure the badge never blocks clicks on the tile
-        badgeImg.style.pointerEvents = 'none';
+        badgeImg.style.pointerEvents = 'none'; // badge never steals clicks
         badgeWrap.appendChild(badgeImg);
       } else {
         const pill = document.createElement('span');
@@ -327,7 +318,7 @@ export class VendingMachine extends Container {
       if (locked) {
         slot.classList.add('locked');
         const lock = document.createElement('div');
-        lock.className = 'vm-lock'; // CSS ::after draws the centered red pill
+        lock.className = 'vm-lock';
         lock.style.pointerEvents = 'none'; // let slot receive the click
         slot.append(lock);
 
@@ -355,7 +346,6 @@ export class VendingMachine extends Container {
       }
     }
 
-    // Ensure button reflects current selection state
     this.updateBuyButton();
   }
 
