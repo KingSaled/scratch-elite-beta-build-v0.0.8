@@ -1,6 +1,10 @@
 // src/core/sfx.ts
+
 const K_VOL = 'sfxVol';
 const K_MUTE = 'sfxMute';
+
+// All SFX live in /public/sfx/*.ogg (and optionally *.mp3)
+const SFX_BASE = `${import.meta.env.BASE_URL}sfx/`;
 
 function load<T>(k: string, d: T): T {
   try {
@@ -15,16 +19,12 @@ function preferOgg(): boolean {
   const a = document.createElement('audio');
   return !!a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"') !== '';
 }
-function buildUrl(relBaseNoExt: string) {
-  // Normalize: strip any leading slashes so we never resolve at domain root
-  const clean = relBaseNoExt.replace(/^\/+/, '');
 
-  // If the caller already supplied a relative path that starts with './' or '../',
-  // keep it; otherwise make it explicitly relative to this module.
-  const baseNoExt = /^(?:\.{1,2}\/)/.test(clean) ? clean : `./${clean}`;
-
-  const ext = preferOgg() ? '.ogg' : '.mp3';
-  return new URL(baseNoExt + ext, import.meta.url).href;
+function buildUrl(nameNoExt: string) {
+  // nameNoExt is just "btn", "ui-nav", etc.
+  const clean = nameNoExt.replace(/^\/+/, ''); // guard against leading '/'
+  const ext = preferOgg() ? 'ogg' : 'mp3';
+  return `${SFX_BASE}${clean}.${ext}`;
 }
 
 interface Voice { url: string; pool: HTMLAudioElement[]; i: number }
@@ -35,8 +35,8 @@ class SfxBus {
   readonly events = new EventTarget();
   private voices: Record<string, Voice> = {};
 
-  register(key: string, relBaseNoExt: string, poolSize = 3) {
-    const url = buildUrl(relBaseNoExt);
+  register(key: string, nameNoExt: string, poolSize = 3) {
+    const url = buildUrl(nameNoExt);
     const pool: HTMLAudioElement[] = [];
     for (let i = 0; i < poolSize; i++) {
       const a = new Audio(url);
@@ -54,14 +54,14 @@ class SfxBus {
     try {
       a.currentTime = 0;
       a.volume = this.mute ? 0 : this.vol;
-      void a.play().catch(() => {}); // swallow NotSupported/blocked errors
+      void a.play().catch(() => {}); // ignore autoplay/capability errors
     } catch {}
   }
 
-  // Optional direct play by path base (without extension)
-  playFile(relBaseNoExt: string) {
+  // Optional: play by file name (without extension)
+  playFile(nameNoExt: string) {
     try {
-      const url = buildUrl(relBaseNoExt);
+      const url = buildUrl(nameNoExt);
       const a = new Audio(url);
       a.volume = this.mute ? 0 : this.vol;
       void a.play().catch(() => {});
@@ -76,7 +76,6 @@ class SfxBus {
     return Math.round(this.vol * 100);
   }
 
-  // both styles supported for callers
   isMuted() {
     return !!this.mute;
   }
@@ -106,20 +105,20 @@ class SfxBus {
 
 export const sfx = new SfxBus();
 
-/* ---- Registered keys (ensure files exist under src/sfx/) ---- */
-sfx.register('nav', '../sfx/ui-nav', 3);
-sfx.register('btn', '../sfx/btn', 3);
-sfx.register('cancel', '../sfx/cancel', 2);
-sfx.register('toggle', '../sfx/toggle', 2);
-sfx.register('slide', '../sfx/slide', 2);
+/* ---- Registered keys (files must exist in public/sfx/) ---- */
+sfx.register('nav', 'ui-nav', 3);
+sfx.register('btn', 'btn', 3);
+sfx.register('cancel', 'cancel', 2);
+sfx.register('toggle', 'toggle', 2);
+sfx.register('slide', 'slide', 2);
 
-sfx.register('modal-open', '../sfx/modal-open', 1);
-sfx.register('modal-close', '../sfx/modal-close', 1);
+sfx.register('modal-open', 'modal-open', 1);
+sfx.register('modal-close', 'modal-close', 1);
 
-sfx.register('rip', '../sfx/rip', 3);
-sfx.register('win', '../sfx/win', 2);
+sfx.register('rip', 'rip', 3);
+sfx.register('win', 'win', 2);
 
-sfx.register('token', '../sfx/token', 2);
-sfx.register('levelup', '../sfx/levelup', 1);
-sfx.register('unlock', '../sfx/unlock', 1);
-sfx.register('badge', '../sfx/badge', 1);
+sfx.register('token', 'token', 2);
+sfx.register('levelup', 'levelup', 1);
+sfx.register('unlock', 'unlock', 1);
+sfx.register('badge', 'badge', 1);
