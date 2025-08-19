@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const panel = document.getElementById('settingsPanel');
   if (!panel) return;
 
+  // Make the settings panel and debug section reliably scrollable on small screens
+  panel.style.overscrollBehavior = 'contain';
+
   /* -------- Preferences -------- */
   const autoReturn = $<HTMLInputElement>('#prefAutoReturn');
   autoReturn.checked = !!(state.flags as any)?.autoReturn;
@@ -92,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch {}
   });
 
-  /* -------- Audio: SFX (Effects) -------- */
+  /* -------- Audio: SFX -------- */
   const sfxMute = $<HTMLInputElement>('#sfxMute');
   const sfxVol = $<HTMLInputElement>('#sfxVol');
   const sfxPct = $<HTMLSpanElement>('#sfxPct');
@@ -141,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Make reset button red but NOT "danger", so it won't use cancel SFX
   btnReset.classList.remove('btn-danger');
-  btnReset.classList.add('btn-reset'); // see CSS snippet below
+  btnReset.classList.add('btn-reset');
 
   btnExport.addEventListener('click', () => {
     const name = (state.profile?.username || 'player')
@@ -206,6 +209,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const debugSection = $('#debugSection');
   const egg = $('#dbgEgg');
 
+  // Ensure debug area can scroll even inside small viewports
+  debugSection.style.maxHeight = '70vh';
+  debugSection.style.overflow = 'auto';
+  (debugSection.style as any).webkitOverflowScrolling = 'touch';
+
   let clicks = 0;
   let timeout: number | undefined;
 
@@ -226,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (pw === 'swag') {
         debugSection.style.display = '';
         toast('Debug menu unlocked.', 'success');
+        debugSection.scrollIntoView({ block: 'nearest' });
       } else if (pw != null) {
         toast('Incorrect password.', 'warn');
       }
@@ -275,7 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const enabled = dbgToggle.checked;
       state.flags = { ...(state.flags || {}), debugUnlockAll: enabled } as any;
 
-      // Suppress badge popups during debug mass-unlock
       const w: any = window;
       const prev = !!w.__BADGES_SUPPRESS__;
       w.__BADGES_SUPPRESS__ = true;
