@@ -35,7 +35,27 @@ function setUIForScene(scene: SceneKey) {
 (window as any).__SET_SCENE_UI__ = (scene: SceneKey) => setUIForScene(scene);
 
 /* ---------------- PIXI APP ---------------- */
-const appDiv = document.getElementById('app') as HTMLDivElement;
+const appDiv = document.getElementById('app') as HTMLElement;
+
+let canvas = appDiv.querySelector('canvas') as HTMLCanvasElement | null;
+if (!canvas) {
+  canvas = document.createElement('canvas');
+  appDiv.appendChild(canvas);
+}
+
+const app = new PIXI.Application({
+  backgroundAlpha: 0,
+  // Never starve low-end drivers with fancy caps during init:
+  antialias: false,
+  powerPreference: 'default',
+  failIfMajorPerformanceCaveat: false,
+  // Make sure the canvas always has a real size:
+  resizeTo: window,   // safe; avoids 0px when #app contains only abs-pos panels
+  autoDensity: true,
+  view: canvas        // use the canvas we appended
+});
+
+await app.init();
 
 // Common options
 const opts: any = {
