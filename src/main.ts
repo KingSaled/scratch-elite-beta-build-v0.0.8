@@ -11,6 +11,12 @@ import './ui/settings';
 import './ui/badgesNotify';
 import './ui/sfx-wiring';
 
+import '@pixi/canvas-renderer';
+import '@pixi/canvas-display';
+import '@pixi/canvas-sprite';
+import '@pixi/canvas-graphics';
+import '@pixi/canvas-text';
+
 /* ---------- Which DOM panels are visible in each scene ---------- */
 const scenePanels: Partial<Record<SceneKey, string[]>> = {
   VendingMachine: ['vendorPanel'],
