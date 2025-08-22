@@ -87,11 +87,8 @@ h6,
 }
 
 #app {
-  position: fixed;
-  inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0;
 }
 
 #app canvas {
@@ -2576,6 +2573,7 @@ canvas {
   opacity: 0.9;
   font-size: 12px;
 }
+
 
 
 
