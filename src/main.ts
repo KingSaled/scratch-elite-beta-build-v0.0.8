@@ -69,7 +69,24 @@ const getCanvas = (): HTMLCanvasElement | null =>
 
 // Append canvas after init so it definitely exists
 const canvas = getCanvas();
-if (canvas) appDiv.appendChild(canvas);
+if (canvas) {
+  appDiv.appendChild(canvas);
+
+  // Harden layering/click-through at runtime
+  appDiv.style.position = 'fixed';
+  appDiv.style.inset = '0';
+  appDiv.style.zIndex = '0';
+
+  canvas.style.position = 'absolute';
+  canvas.style.inset = '0';
+  canvas.style.pointerEvents = 'none';
+
+  const ui = document.querySelector<HTMLElement>('.ui');
+  if (ui) {
+    ui.style.position = 'relative';
+    ui.style.zIndex = '1';
+  }
+}
 
 // Listen for GPU context restore safely
 canvas?.addEventListener('webglcontextrestored', () => {
