@@ -1,4 +1,5 @@
 import { Application } from 'pixi.js';
+import '@pixi/canvas'; // enable CanvasRenderer fallback if WebGL creation fails
 import './styles.css';
 import { SceneManager } from './core/sceneManager';
 import type { SceneKey } from './core/sceneManager';
@@ -22,9 +23,7 @@ const scenePanels: Partial<Record<SceneKey, string[]>> = {
 };
 
 function setUIForScene(scene: SceneKey) {
-  const want = new Set(
-    (scenePanels[scene] ?? []).map((id) => id.toLowerCase())
-  );
+  const want = new Set((scenePanels[scene] ?? []).map((id) => id.toLowerCase()));
   const ALL =
     '#vendorPanel, #inventoryPanel, #upgradesPanel, #statsPanel, #profilePanel, #settingsPanel, #winbar';
   document.querySelectorAll<HTMLElement>(ALL).forEach((el) => {
@@ -53,9 +52,10 @@ await app.init({
   antialias: false,                  // safer on strict Firefox/ANGLE combos
   powerPreference: 'default',
   failIfMajorPerformanceCaveat: false,
-  resizeTo: window,                  // guarantees non-zero canvas size
+  resizeTo: window,                  // guarantees non-zero canvas size even if panels are abs-pos
   autoDensity: true,
   view: canvas,                      // use the canvas we appended
+  // preference: 'webgl',            // optional hint; canvas fallback will still work if webgl fails
 });
 
 // (Optional) handle GPU context restoration
@@ -84,9 +84,7 @@ if (!state.flags) state.flags = {};
 if (typeof state.flags.autoReturn === 'undefined') {
   state.flags.autoReturn = true;
   saveNow();
-  const prefAuto = document.getElementById(
-    'prefAutoReturn'
-  ) as HTMLInputElement | null;
+  const prefAuto = document.getElementById('prefAutoReturn') as HTMLInputElement | null;
   if (prefAuto) prefAuto.checked = true;
 }
 
@@ -109,9 +107,7 @@ window.addEventListener('keydown', kick, { once: true });
 
 /* Reduce the “FOUC” warning */
 if (document.readyState !== 'complete') {
-  await new Promise<void>((r) =>
-    window.addEventListener('load', () => r(), { once: true })
-  );
+  await new Promise<void>((r) => window.addEventListener('load', () => r(), { once: true }));
 }
 if ((document as any).fonts?.ready) {
   try {
@@ -170,7 +166,7 @@ function onResize() {
   const { w, h } = cssCanvasSize();
   if (w === 0 || h === 0) return;
 
-  // Resize PIXI renderer (works for both v7 and v8)
+  // Resize PIXI renderer
   app.renderer.resize(w, h);
 
   // Let scenes lay out their content
@@ -195,7 +191,6 @@ window.addEventListener('resize', onResize, { passive: true });
 // Initial layout
 onResize();
 
-
 /* ---------------- START ---------------- */
 scenes.goto('Inventory');
 setUIForScene('Inventory');
@@ -207,7 +202,7 @@ if (import.meta.hot) {
     try {
       (scenes as any)?.clearAll?.();
     } catch {}
-    // Destroy app; v7/v8 both accept this form
+    // Destroy app; v7 accepts this signature
     app.destroy(true, { children: true, texture: false, baseTexture: false });
   });
 }
