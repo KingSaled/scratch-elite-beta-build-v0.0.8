@@ -146,11 +146,17 @@ document
 /* ---------------- LAYOUT ---------------- */
 // Size the canvas CSS to the container and resize the renderer
 function cssCanvasSize() {
-  const c = getCanvas();
+  // use the single canvas created in the PIXI block above
+  const c = canvas;
   if (!c || !c.isConnected) return { w: 0, h: 0 };
-  const rect = appDiv.getBoundingClientRect(); // measure container, not canvas
+
+  // Measure the container, not the canvas
+  const rect = appDiv.getBoundingClientRect();
+
+  // Keep CSS size in sync with the container (absolute/inset:0 will also fill it)
   c.style.width = rect.width + 'px';
   c.style.height = rect.height + 'px';
+
   return {
     w: Math.max(1, Math.round(rect.width)),
     h: Math.max(1, Math.round(rect.height)),
@@ -158,31 +164,37 @@ function cssCanvasSize() {
 }
 
 function onResize() {
-  const c = getCanvas();
-  if (!c) return; // not ready yet
+  const c = canvas;
+  if (!c || !c.isConnected) return; // not ready yet
+
   const { w, h } = cssCanvasSize();
   if (w === 0 || h === 0) return;
 
-  // Both v7 and v8 support resize(w, h)
+  // Resize PIXI renderer (works for both v7 and v8)
   app.renderer.resize(w, h);
 
   // Let scenes lay out their content
   scenes.layout(w, h);
 }
 
+// Expose for debugging
 (window as any).__APP__ = app;
 (window as any).__SCENES__ = scenes;
 
-// Observe the container (stable) rather than the canvas (which might be null early)
+// Observe the container (stable) rather than the canvas
 const ro = new ResizeObserver(() => onResize());
 ro.observe(appDiv);
 
 // Also handle window + visual viewport changes
 if ((window as any).visualViewport) {
-  (window as any).visualViewport.addEventListener('resize', onResize);
-  (window as any).visualViewport.addEventListener('scroll', onResize);
+  (window as any).visualViewport.addEventListener('resize', onResize, { passive: true });
+  (window as any).visualViewport.addEventListener('scroll', onResize, { passive: true });
 }
-window.addEventListener('resize', onResize);
+window.addEventListener('resize', onResize, { passive: true });
+
+// Initial layout
+onResize();
+
 
 /* ---------------- START ---------------- */
 scenes.goto('Inventory');
