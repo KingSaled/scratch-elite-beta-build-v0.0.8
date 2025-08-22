@@ -35,75 +35,33 @@ function setUIForScene(scene: SceneKey) {
 (window as any).__SET_SCENE_UI__ = (scene: SceneKey) => setUIForScene(scene);
 
 /* ---------------- PIXI APP ---------------- */
-const appDiv = document.getElementById('app') as HTMLElement;
+const appDiv = document.getElementById('app') as HTMLDivElement;
 
-let canvas = appDiv.querySelector('canvas') as HTMLCanvasElement | null;
-if (!canvas) {
-  canvas = document.createElement('canvas');
-  appDiv.appendChild(canvas);
-}
+// Ensure exactly ONE canvas (reuse if one already exists)
+const canvas: HTMLCanvasElement = (() => {
+  const existing = appDiv.querySelector('canvas') as HTMLCanvasElement | null;
+  if (existing) return existing;
+  const c = document.createElement('canvas');
+  appDiv.appendChild(c);
+  return c;
+})();
 
-const app = new PIXI.Application({
+// Create a single Pixi Application and initialize it once
+const app = new Application();
+await app.init({
   backgroundAlpha: 0,
-  // Never starve low-end drivers with fancy caps during init:
-  antialias: false,
+  antialias: false,                  // safer on strict Firefox/ANGLE combos
   powerPreference: 'default',
   failIfMajorPerformanceCaveat: false,
-  // Make sure the canvas always has a real size:
-  resizeTo: window,   // safe; avoids 0px when #app contains only abs-pos panels
+  resizeTo: window,                  // guarantees non-zero canvas size
   autoDensity: true,
-  view: canvas        // use the canvas we appended
+  view: canvas,                      // use the canvas we appended
 });
 
-await app.init();
-
-// Common options
-const opts: any = {
-  backgroundAlpha: 0,
-  resizeTo: appDiv,
-  antialias: true,
-  resolution: Math.min(window.devicePixelRatio || 1, 1.5),
-  powerPreference: 'high-performance',
-  failIfMajorPerformanceCaveat: false,
-  // v8-only hint; harmless on v7
-  preference: 'webgl',
-};
-
-// Create the app in a way that works for both v8 and v7
-let app: any;
-
-if (typeof (Application as any).prototype?.init === 'function') {
-  // PIXI v8 style
-  app = new Application();
-  await app.init(opts);
-} else {
-  // PIXI v7 style
-  app = new (Application as any)(opts);
-}
-
-// Helper to get the canvas across v8 (canvas) and v7 (view)
-const getCanvas = (): HTMLCanvasElement | null =>
-  (app?.canvas as HTMLCanvasElement) ??
-  (app?.view as HTMLCanvasElement) ??
-  null;
-
-// Append canvas after init so it definitely exists
-const canvas = getCanvas();
-if (canvas) {
-  appDiv.appendChild(canvas);
-
-  // Harden layering/click-through at runtime
-  const ui = document.querySelector<HTMLElement>('.ui');
-  if (ui) {
-    ui.style.position = 'relative';
-    ui.style.zIndex = '1';
-  }
-}
-
-// Listen for GPU context restore safely
-canvas?.addEventListener('webglcontextrestored', () => {
+// (Optional) handle GPU context restoration
+canvas.addEventListener('webglcontextrestored', () => {
   console.warn('[Pixi] context restored – relayout current scene');
-  onResize();
+  try { (onResize as any)?.(); } catch {}
 });
 
 // Scene manager
