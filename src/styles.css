@@ -86,23 +86,21 @@ h6,
   font-family: var(--font-ui-heading);
 }
 
-#app canvas {
-  position: absolute;   /* not fixed */
-  inset: 0;             /* stretch to #app */
-  pointer-events: none; /* clicks go to HTML UI */
-  z-index: 1;           /* above backgrounds, below UI */
-  display: block;       /* avoid inline-canvas quirks */
+#app {
+  position: relative;     /* canvas positions against this */
+  min-height: 100vh;      /* ensures the canvas always has height */
+  z-index: 0;
 }
 
 #app canvas {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  width: 100vw; height: 100vh;
-  pointer-events: none;
-  z-index: -1;
+  position: absolute;   /* fills #app without affecting layout */
+  inset: 0;
+  pointer-events: none; /* let clicks through to HTML */
+  z-index: 1;           /* under UI, above page background */
+  display: block;
 }
 
-.ui, .panel, .navbar {
+.ui, .panel, .navbar, .topbar {
   position: relative;
   z-index: 10;
 }
@@ -2578,6 +2576,7 @@ canvas {
   opacity: 0.9;
   font-size: 12px;
 }
+
 
 
 
