@@ -215,6 +215,15 @@ export class VendingMachine extends Container {
 
     this.grid.innerHTML = '';
 
+    this.grid.addEventListener('click', (ev) => {
+      const slot = (ev.target as HTMLElement).closest('.vm-slot') as HTMLElement | null;
+      if (!slot) return;
+      const id = slot.getAttribute('data-tier');
+      if (!id) return;
+      if (slot.classList.contains('locked')) this.openUnlock(id, slot.dataset.name || 'Ticket');
+      else this.selectTier(slot, id);
+    }, { passive: true });
+
     const tiers = getTiers()
       .slice()
       .sort((a, b) => a.price - b.price);
@@ -228,6 +237,8 @@ export class VendingMachine extends Container {
       slot.className = 'vm-slot';
       slot.setAttribute('role', 'button');
       slot.setAttribute('tabindex', '0');
+      slot.setAttribute('data-tier', t.id);
+      slot.dataset.name = t.name || 'Ticket';
 
       // Keep tiles clickable regardless of image state
       slot.style.pointerEvents = 'auto';
@@ -507,3 +518,4 @@ export class VendingMachine extends Container {
     }
   }
 }
+
