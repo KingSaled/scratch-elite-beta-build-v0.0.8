@@ -1,5 +1,4 @@
 import { Application } from 'pixi.js';
-import '@pixi/canvas'; // enable CanvasRenderer fallback if WebGL creation fails
 import './styles.css';
 import { SceneManager } from './core/sceneManager';
 import type { SceneKey } from './core/sceneManager';
@@ -10,12 +9,6 @@ import { discoverLofi, Bgm } from './core/bgm';
 import './ui/settings';
 import './ui/badgesNotify';
 import './ui/sfx-wiring';
-
-import '@pixi/canvas-renderer';
-import '@pixi/canvas-display';
-import '@pixi/canvas-sprite';
-import '@pixi/canvas-graphics';
-import '@pixi/canvas-text';
 
 /* ---------- Which DOM panels are visible in each scene ---------- */
 const scenePanels: Partial<Record<SceneKey, string[]>> = {
@@ -53,16 +46,66 @@ const canvas: HTMLCanvasElement = (() => {
 
 // Create a single Pixi Application and initialize it once
 const app = new Application();
-await app.init({
-  backgroundAlpha: 0,
-  antialias: false,                  // safer on strict Firefox/ANGLE combos
-  powerPreference: 'default',
-  failIfMajorPerformanceCaveat: false,
-  resizeTo: window,                  // guarantees non-zero canvas size even if panels are abs-pos
-  autoDensity: true,
-  view: canvas,                      // use the canvas we appended
-  // preference: 'webgl',            // optional hint; canvas fallback will still work if webgl fails
-});
+
+async function initRenderer() {
+  try {
+    await app.init({
+      backgroundAlpha: 0,
+      antialias: false,                // safer on strict Firefox/ANGLE combos
+      powerPreference: 'default',
+      failIfMajorPerformanceCaveat: false,
+      resizeTo: window,                // guarantees non-zero canvas size
+      autoDensity: true,
+      view: canvas,                    // use the canvas we appended
+      // preference: 'webgl',          // optional hint; commented to avoid v7/v8 differences
+    });
+  } catch (err) {
+    // Show a friendly notice instead of crashing silently
+    const msg = document.createElement('div');
+    msg.style.position = 'fixed';
+    msg.style.inset = '80px 16px 16px 16px';
+    msg.style.background = 'rgba(15,18,26,0.9)';
+    msg.style.backdropFilter = 'blur(6px)';
+    msg.style.border = '1px solid rgba(255,255,255,0.12)';
+    msg.style.borderRadius = '14px';
+    msg.style.padding = '16px 18px';
+    msg.style.color = '#e8eefc';
+    msg.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif';
+    msg.style.zIndex = '9999';
+    msg.innerHTML = `
+      <div style="font-weight:700;margin-bottom:8px;font-size:16px">Graphics renderer failed to start</div>
+      <div style="opacity:.9;line-height:1.5;margin-bottom:10px">
+        Your browser blocked WebGL on this machine. The game can still run by enabling Pixi’s Canvas fallback.
+      </div>
+      <ol style="opacity:.9;line-height:1.5;margin:0 0 10px 16px">
+        <li>Install the Pixi canvas packages in the repo:
+          <code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px;display:inline-block;margin-top:4px">
+            npm i @pixi/canvas-renderer@7.4.3 @pixi/canvas-display@7.4.3 @pixi/canvas-sprite@7.4.3 @pixi/canvas-graphics@7.4.3 @pixi/canvas-text@7.4.3
+          </code>
+        </li>
+        <li>Add these imports at the top of <code>main.ts</code> (after the styles import):<br/>
+          <code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px;display:block;margin-top:6px;white-space:pre">
+import '@pixi/canvas-renderer';
+import '@pixi/canvas-display';
+import '@pixi/canvas-sprite';
+import '@pixi/canvas-graphics';
+import '@pixi/canvas-text';</code>
+        </li>
+      </ol>
+      <div style="opacity:.8">Or test in a browser/profile where WebGL is enabled (Chrome/Edge typically work out of the box).</div>
+    `;
+    document.body.appendChild(msg);
+    console.error('Pixi renderer init failed:', err);
+    return false;
+  }
+  return true;
+}
+
+const ok = await initRenderer();
+if (!ok) {
+  // Stop boot if renderer isn't available
+  throw new Error('Renderer unavailable');
+}
 
 // (Optional) handle GPU context restoration
 canvas.addEventListener('webglcontextrestored', () => {
@@ -148,7 +191,6 @@ document
 /* ---------------- LAYOUT ---------------- */
 // Size the canvas CSS to the container and resize the renderer
 function cssCanvasSize() {
-  // use the single canvas created in the PIXI block above
   const c = canvas;
   if (!c || !c.isConnected) return { w: 0, h: 0 };
 
