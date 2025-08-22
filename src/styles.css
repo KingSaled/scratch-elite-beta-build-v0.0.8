@@ -399,6 +399,13 @@ select {
 canvas {
   touch-action: manipulation;
 }
+
+canvas {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
 #vendorPanel,
 #inventoryPanel,
 #upgradesPanel,
@@ -2557,4 +2564,5 @@ canvas {
   opacity: 0.9;
   font-size: 12px;
 }
+
 
