@@ -86,9 +86,12 @@ h6,
   font-family: var(--font-ui-heading);
 }
 
-#app {
-  width: 100vw;
-  height: 100vh;
+#app canvas {
+  position: absolute;   /* not fixed */
+  inset: 0;             /* stretch to #app */
+  pointer-events: none; /* clicks go to HTML UI */
+  z-index: 1;           /* above backgrounds, below UI */
+  display: block;       /* avoid inline-canvas quirks */
 }
 
 #app canvas {
@@ -99,9 +102,9 @@ h6,
   z-index: -1;
 }
 
-.ui {
+.ui, .panel, .navbar {
   position: relative;
-  z-index: 1;
+  z-index: 10;
 }
 
 .ui.safe {
@@ -2575,6 +2578,7 @@ canvas {
   opacity: 0.9;
   font-size: 12px;
 }
+
 
 
 
